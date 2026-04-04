@@ -39,8 +39,8 @@ The opportunities below combine verified public positioning with analyst inferen
 | Play | Products | Client types | Why now |
 | --- | --- | --- | --- |
 | Hard-to-abate transition finance program | Transition finance loans, SLLs, transition bonds | Steel, cement, chemicals and diversified industrial corporates | DB has the clearest publicly documented hard-to-abate transition framework of the three banks reviewed. |
-| REC-style renewable lending and refinancing platform | Project finance, AR solutions, letters of credit, ECB loans, green bonds | NBFIs, developers, utilities | DB India renewables coverage explicitly references this financing mix, making it credible for Indian renewable platforms and lenders. |
-| Storage and flexible-grid structured lending | Project finance, blended finance, working-capital bridges | Developers, utilities, EPCs | DB India transition and project-finance content both highlight storage need and capital intensity, supporting a structured-lending role. |
+| REC-style renewable lending and refinancing platform | Project finance, AR solutions, letters of credit, ECB loans, green bonds | NBFIs, developers, utilities | DBs India renewables coverage explicitly references this financing mix, making it credible for Indian renewable platforms and lenders. |
+| Storage and flexible-grid structured lending | Project finance, blended finance, working-capital bridges | Developers, utilities, EPCs | DBs India transition and project-finance content both highlight storage need and capital intensity, supporting a structured-lending role. |
 
 ## UBS
 
