@@ -144,3 +144,117 @@ For this repository, the country-level annual financing stack is anchored to a *
     return (
         f"{narrative}\n\n{subsector_table}\n\n{product_section}\n\n{funding_mix_table}\n\n{closing}\n"
     )
+
+
+def render_product_mapping_playbook(
+    product_table: pd.DataFrame,
+    subsector_recommendations: pd.DataFrame,
+    corporate_recommendations: pd.DataFrame,
+    source_ledger: pd.DataFrame | None = None,
+) -> str:
+    """Render the product mapping memo."""
+
+    sources = load_sources() if source_ledger is None else source_ledger
+    use_of_proceeds = product_table.loc[
+        product_table["Product Family"] == "use of proceeds"
+    ]
+    linked_and_transition = product_table.loc[
+        product_table["Product Family"] != "use of proceeds"
+    ]
+
+    sections = [
+        "# Product Mapping Playbook",
+        "",
+        "## Product Taxonomy Overview",
+        "",
+        "The product set is split deliberately between **use-of-proceeds** instruments and **sustainability-linked or transition** instruments. That matters in India: use-of-proceeds debt is strongest where asset eligibility is clear, while SLLs and transition facilities are more effective when the borrower needs balance-sheet flexibility or is decarbonising hard-to-abate operations. [SC1][SC2][DB2][UBS5]",
+        "",
+        "### Use-of-Proceeds Products",
+        "",
+        markdown_table(use_of_proceeds),
+        "",
+        "### Sustainability-Linked and Transition Products",
+        "",
+        markdown_table(linked_and_transition),
+        "",
+        "## Subsector to Product Mapping",
+        "",
+    ]
+
+    for subsector, frame in subsector_recommendations.groupby("subsector", sort=False):
+        sections.extend(
+            [
+                f"### {subsector}",
+                "",
+                markdown_table(
+                    frame[
+                        [
+                            "product_name",
+                            "product_family",
+                            "instrument_type",
+                            "score",
+                            "why_it_fits",
+                        ]
+                    ].rename(
+                        columns={
+                            "product_name": "Product",
+                            "product_family": "Family",
+                            "instrument_type": "Type",
+                            "score": "Score",
+                            "why_it_fits": "Rationale",
+                        }
+                    )
+                ),
+                "",
+            ]
+        )
+
+    sections.extend(
+        [
+            "## Corporate Use-Case Mini Case Studies",
+            "",
+            "The fictional borrower set below is intentionally realistic but invented. It is designed to show how the same bank toolkit changes when borrower type, credit profile and transition stage change.",
+            "",
+        ]
+    )
+
+    for name, frame in corporate_recommendations.groupby("name", sort=False):
+        sections.extend(
+            [
+                f"### {name}",
+                "",
+                markdown_table(
+                    frame[
+                        [
+                            "product_name",
+                            "product_family",
+                            "score",
+                            "why_it_fits",
+                        ]
+                    ].rename(
+                        columns={
+                            "product_name": "Recommended product",
+                            "product_family": "Family",
+                            "score": "Score",
+                            "why_it_fits": "Why it fits",
+                        }
+                    )
+                ),
+                "",
+            ]
+        )
+
+    sections.extend(
+        [
+            "## Notes",
+            "",
+            "- Product scoring is rule-based and explainable. It is intentionally transparent rather than optimized as a black-box model.",
+            "- Green securitisation and carbon finance are retained because they are real market instruments, but bank-specific public India evidence for all three banks was not verified in every case. They should be treated as optional scaling tools, not default lead products.",
+            "",
+            "## Sources",
+            "",
+            format_source_list(["SC1", "SC2", "SC4", "DB1", "DB2", "DB5", "UBS2", "UBS4", "UBS5"], sources),
+        ]
+    )
+
+    return "\n".join(sections) + "\n"
