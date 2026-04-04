@@ -1,6 +1,6 @@
 # Sustainable Finance / India Energy Transition Work Sample
 
-This repository is a consulting-style work sample on how sustainable finance can be deployed across India's energy transition, with product mapping and bank-specific positioning for **Standard Chartered**, **Deutsche Bank**, and **UBS**.
+This repository is a consulting-style work sample on how sustainable finance can be deployed across India's energy transition, with product mapping and bank-specific positioning.
 
 It is designed to feel like an associate-level strategy pack that sits between market research and a product-origination toolkit:
 
@@ -136,4 +136,4 @@ If this analysis is reused in another repo or portfolio, keep the same separatio
 
 ## Disclaimer
 
-This project is an educational work sample, not investment advice, and is **not affiliated with Standard Chartered, Deutsche Bank, UBS, or any other institution**.
+This project is an educational work sample, not investment advice.
