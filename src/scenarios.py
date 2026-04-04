@@ -92,6 +92,15 @@ SUBSECTOR_PRODUCT_FIT: Dict[str, str] = {
     "Circular economy and resource efficiency": "Working-capital lines, SLLs and carbon-linked revenue support can unlock smaller-ticket projects that are too fragmented for public bonds.",
 }
 
+SECTOR_BANKABILITY_MAP: Dict[tuple[str, str], str] = {
+    ("mature", "core"): "High",
+    ("mature", "core-plus"): "High",
+    ("scaling", "core-plus"): "Medium-High",
+    ("scaling", "opportunistic"): "Medium",
+    ("early", "opportunistic"): "Catalytic",
+    ("early", "core-plus"): "Medium",
+}
+
 
 @dataclass(frozen=True)
 class FundingMix:
@@ -128,6 +137,43 @@ def load_transition_needs(path: Path | str = INDIA_TRANSITION_NEEDS_PATH) -> pd.
     return pd.read_csv(path)
 
 
+def validate_subsector_allocations(
+    allocation_weights: Mapping[str, float] | None = None,
+) -> float:
+    """Validate that scenario allocation weights sum to 100%."""
+
+    weights = dict(SUBSECTOR_ALLOCATION_WEIGHTS if allocation_weights is None else allocation_weights)
+    total = round(sum(weights.values()), 6)
+    if abs(total - 1.0) > 1e-6:
+        raise ValueError(
+            f"Subsector allocation weights must sum to 1.0, received {total:.6f}."
+        )
+    return total
+
+
+def validate_subsector_inputs(
+    subsectors: pd.DataFrame,
+    allocation_weights: Mapping[str, float] | None = None,
+    capital_channel_biases: Mapping[str, Mapping[str, float]] | None = None,
+) -> None:
+    """Validate that each subsector has scenario and capital-channel coverage."""
+
+    weights = SUBSECTOR_ALLOCATION_WEIGHTS if allocation_weights is None else allocation_weights
+    channels = CAPITAL_CHANNEL_BIASES if capital_channel_biases is None else capital_channel_biases
+
+    missing_weights = set(subsectors["subsector"]) - set(weights)
+    if missing_weights:
+        raise KeyError(f"Missing allocation weights for subsectors: {sorted(missing_weights)}")
+
+    missing_channels = set(subsectors["subsector"]) - set(channels)
+    if missing_channels:
+        raise KeyError(
+            f"Missing capital-channel biases for subsectors: {sorted(missing_channels)}"
+        )
+
+    validate_subsector_allocations(weights)
+
+
 def add_investment_scenarios(
     subsectors: pd.DataFrame,
     total_annual_need_usd_bn: float = PUBLIC_ANCHOR_ANNUAL_NEED_USD_BN,
@@ -136,9 +182,7 @@ def add_investment_scenarios(
 ) -> pd.DataFrame:
     """Attach low, central and high illustrative annual investment assumptions."""
 
-    missing = set(subsectors["subsector"]) - set(SUBSECTOR_ALLOCATION_WEIGHTS)
-    if missing:
-        raise KeyError(f"Missing allocation weights for subsectors: {sorted(missing)}")
+    validate_subsector_inputs(subsectors)
 
     df = subsectors.copy()
     df["allocation_weight"] = df["subsector"].map(SUBSECTOR_ALLOCATION_WEIGHTS)
@@ -274,3 +318,113 @@ def build_phase_roadmap() -> pd.DataFrame:
             },
         ]
     )
+
+
+def build_sector_priority_matrix(subsectors: pd.DataFrame) -> pd.DataFrame:
+    """Build a consulting-style sector priority matrix for the appendix report."""
+
+    def _priority_tier(row: pd.Series) -> str:
+        if row["central_case_annual_investment_usd_bn"] >= 40 and row["bankability"] in {
+            "High",
+            "Medium-High",
+        }:
+            return "Tier 1"
+        if row["bankability"] == "Catalytic" or row["market_maturity"] == "early":
+            return "Tier 2 - catalytic"
+        return "Tier 2"
+
+    df = subsectors.copy()
+    if "central_case_annual_investment_usd_bn" not in df.columns:
+        df = add_investment_scenarios(df)
+
+    df["bankability"] = df.apply(
+        lambda row: SECTOR_BANKABILITY_MAP.get(
+            (str(row["market_maturity"]).lower(), str(row["risk_profile"]).lower()),
+            "Medium",
+        ),
+        axis=1,
+    )
+    df["priority_tier"] = df.apply(_priority_tier, axis=1)
+    df["commercial_read_through"] = df.apply(
+        lambda row: _sector_opportunity_commentary(row["subsector"], row["priority_tier"]),
+        axis=1,
+    )
+    return df[
+        [
+            "subsector",
+            "central_case_annual_investment_usd_bn",
+            "market_maturity",
+            "capex_intensity",
+            "bankability",
+            "priority_tier",
+            "commercial_read_through",
+        ]
+    ].rename(
+        columns={
+            "subsector": "Subsector",
+            "central_case_annual_investment_usd_bn": "Illustrative annual need (USD bn)",
+            "market_maturity": "Market maturity",
+            "capex_intensity": "Capex intensity",
+            "bankability": "Bankability",
+            "priority_tier": "Priority tier",
+            "commercial_read_through": "Commercial read-through",
+        }
+    )
+
+
+def build_assumption_register() -> pd.DataFrame:
+    """Return the model assumption register used in the portfolio appendix."""
+
+    return pd.DataFrame(
+        [
+            {
+                "Area": "Country financing anchor",
+                "Assumption": "USD 300bn annual transition financing need used as the central illustrative anchor.",
+                "Treatment": "Illustrative scenario input",
+                "Confidence": "Medium",
+                "Why it matters": "Sets the order-of-magnitude envelope for subsector allocation and capital-pool sizing.",
+            },
+            {
+                "Area": "Subsector splits",
+                "Assumption": "Allocation weights translate the country anchor across eight transition subsectors.",
+                "Treatment": "Illustrative scenario input",
+                "Confidence": "Medium",
+                "Why it matters": "Determines where products are shown to scale first.",
+            },
+            {
+                "Area": "Capital-channel mix",
+                "Assumption": "Each subsector is split across bank balance sheet, public markets, blended / DFI, and carbon-linked pools.",
+                "Treatment": "Illustrative scenario input",
+                "Confidence": "Medium-Low",
+                "Why it matters": "Frames where each bank can realistically originate or distribute capital.",
+            },
+            {
+                "Area": "Borrower archetypes",
+                "Assumption": "Corporate profiles are fictional but realistic and are not intended to represent actual clients.",
+                "Treatment": "Design choice",
+                "Confidence": "High",
+                "Why it matters": "Allows product-stack demonstration without client confidentiality concerns.",
+            },
+            {
+                "Area": "Product scoring",
+                "Assumption": "Rule-based scoring prioritises explainability over statistical optimisation.",
+                "Treatment": "Method choice",
+                "Confidence": "High",
+                "Why it matters": "Keeps the work sample interpretable for strategy and origination discussions.",
+            },
+        ]
+    )
+
+
+def _sector_opportunity_commentary(subsector: str, tier: str) -> str:
+    commentary = {
+        "Utility-scale renewables": "Large addressable pool for project finance, syndicated debt and refinancing bonds.",
+        "Rooftop and behind-the-meter solar": "Requires warehouse, aggregation and on-lending structures rather than single-asset capital markets.",
+        "Grid and transmission upgrades": "Favors long-dated infrastructure debt and later-stage refinancing once regulated cash flows are visible.",
+        "Battery storage and flexible capacity": "Commercially attractive but still benefits from catalytic or risk-sharing overlays.",
+        "Green buildings and cooling retrofits": "Steady pipeline for green loans, green bonds and real-estate refinancing mandates.",
+        "EV charging and fleet electrification": "Needs combined capex and working-capital toolkit, particularly for operators and suppliers.",
+        "Industrial decarbonisation": "High strategic value but more transition- and KPI-led than pure green use-of-proceeds.",
+        "Circular economy and resource efficiency": "Smaller ticket sizes favor structured working capital, SLLs and selective carbon-linked support.",
+    }
+    return f"{tier}: {commentary.get(subsector, 'Commercial rationale not set.')}"

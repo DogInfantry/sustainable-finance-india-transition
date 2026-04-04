@@ -37,29 +37,37 @@ SUBSECTOR_PRODUCT_BONUS = {
         "Green project finance loan": 2.8,
         "Green bond": 1.9,
         "Green corporate term loan": 0.9,
+        "Refinancing / take-out facility": 1.5,
+        "Advisory-led green / transition capital-markets mandate": 0.8,
         "Sustainability-linked loan (SLL)": -0.4,
     },
     "Rooftop and behind-the-meter solar": {
         "Green corporate term loan": 1.3,
         "Green securitisation / asset-backed refinancing": 1.8,
         "Blended finance platform (DFI + commercial)": 1.5,
+        "Warehouse / aggregation facility": 2.2,
+        "Guarantee / partial risk-sharing facility": 1.4,
         "Sustainability-linked loan (SLL)": 0.6,
     },
     "Grid and transmission upgrades": {
         "Green project finance loan": 2.5,
         "Green bond": 1.4,
         "Green corporate term loan": 0.8,
+        "Refinancing / take-out facility": 1.1,
         "Sustainability-linked loan (SLL)": -0.8,
     },
     "Battery storage and flexible capacity": {
         "Green project finance loan": 1.5,
         "Blended finance platform (DFI + commercial)": 1.8,
         "Green corporate term loan": 1.0,
+        "Guarantee / partial risk-sharing facility": 1.8,
+        "Warehouse / aggregation facility": 0.8,
         "Sustainability-linked loan (SLL)": 0.4,
     },
     "Green buildings and cooling retrofits": {
         "Green corporate term loan": 1.5,
         "Green bond": 1.2,
+        "Advisory-led green / transition capital-markets mandate": 1.0,
         "Sustainability-linked loan (SLL)": 1.2,
     },
     "EV charging and fleet electrification": {
@@ -67,18 +75,23 @@ SUBSECTOR_PRODUCT_BONUS = {
         "ESG-linked working capital / sustainable trade finance": 1.7,
         "Blended finance platform (DFI + commercial)": 1.3,
         "Green securitisation / asset-backed refinancing": 1.1,
+        "Warehouse / aggregation facility": 1.8,
+        "Guarantee / partial risk-sharing facility": 1.2,
     },
     "Industrial decarbonisation": {
         "Transition finance loan": 2.5,
         "Sustainability-linked loan (SLL)": 2.1,
         "Blended finance platform (DFI + commercial)": 1.8,
         "Transition bond": 1.1,
+        "KPI-linked transition bond": 1.6,
+        "Advisory-led green / transition capital-markets mandate": 0.9,
     },
     "Circular economy and resource efficiency": {
         "ESG-linked working capital / sustainable trade finance": 1.6,
         "Sustainability-linked loan (SLL)": 1.4,
         "Carbon finance / results-based finance": 1.2,
         "Blended finance platform (DFI + commercial)": 1.0,
+        "Guarantee / partial risk-sharing facility": 1.1,
     },
 }
 
@@ -174,6 +187,75 @@ def build_corporate_recommendations(
         ranked.insert(2, "subsector", row["subsector"])
         frames.append(ranked)
     return pd.concat(frames, ignore_index=True)
+
+
+def build_score_matrix(subsectors: pd.DataFrame, products: pd.DataFrame) -> pd.DataFrame:
+    """Build the full product score matrix used for visualisation."""
+
+    rows = []
+    for subsector in subsectors.to_dict(orient="records"):
+        for product in products.to_dict(orient="records"):
+            rows.append(
+                {
+                    "subsector": subsector["subsector"],
+                    "product_name": product["product_name"],
+                    "score": score_product_for_use_case(subsector, product),
+                }
+            )
+    score_frame = pd.DataFrame(rows)
+    matrix = score_frame.pivot(
+        index="product_name",
+        columns="subsector",
+        values="score",
+    )
+    return matrix.sort_index()
+
+
+def build_borrower_archetype_summary(
+    profiles: pd.DataFrame,
+    subsectors: pd.DataFrame,
+    products: pd.DataFrame,
+    top_n: int = 2,
+) -> pd.DataFrame:
+    """Summarise the top recommended products for each borrower archetype."""
+
+    recommendation_table = build_corporate_recommendations(
+        profiles,
+        subsectors,
+        products,
+        top_n=top_n,
+    )
+    summary = (
+        recommendation_table.groupby(["name", "client_type", "subsector"], sort=False)
+        .agg(
+            {
+                "product_name": lambda values: "; ".join(values),
+                "why_it_fits": _summarise_reasons,
+            }
+        )
+        .reset_index()
+    )
+    return summary.rename(
+        columns={
+            "name": "Borrower archetype",
+            "client_type": "Client type",
+            "subsector": "Subsector",
+            "product_name": "Recommended products",
+            "why_it_fits": "Why these products fit",
+        }
+    )
+
+
+def _summarise_reasons(values: Iterable[str]) -> str:
+    """Compress raw rule explanations into a concise banker-readable summary."""
+
+    ordered: list[str] = []
+    for text in values:
+        for fragment in str(text).split("; "):
+            fragment = fragment.strip()
+            if fragment and fragment not in ordered:
+                ordered.append(fragment)
+    return "; ".join(ordered[:4])
 
 
 def export_product_mapping_table(products: pd.DataFrame) -> pd.DataFrame:
@@ -436,11 +518,23 @@ def _project_need_bonus(row: Mapping[str, Any], product_row: Mapping[str, Any]) 
             bonus += 0.7
 
     if any(term in text for term in ["refinancing", "bond market", "take-out", "portfolio refinancing"]):
-        if name in {"green bond", "transition bond", "green securitisation / asset-backed refinancing"}:
+        if name in {
+            "green bond",
+            "transition bond",
+            "green securitisation / asset-backed refinancing",
+            "refinancing / take-out facility",
+            "advisory-led green / transition capital-markets mandate",
+            "kpi-linked transition bond",
+        }:
             bonus += 1.6
 
     if any(term in text for term in ["working capital", "supplier finance", "receivable", "charger", "battery"]):
-        if "working capital" in name or "sustainability-linked loan" in name:
+        if (
+            "working capital" in name
+            or "sustainability-linked loan" in name
+            or "warehouse / aggregation facility" in name
+            or "guarantee / partial risk-sharing facility" in name
+        ):
             bonus += 1.4
 
     return bonus

@@ -4,3 +4,4 @@ matplotlib>=3.9
 jupyter>=1.1
 nbformat>=5.10
 rich>=13.9
+pytest>=8.3

@@ -1,139 +1,158 @@
-# Sustainable Finance / India Energy Transition Work Sample
+# India Sustainable Finance Transition Roadmap
 
-This repository is a consulting-style work sample on how sustainable finance can be deployed across India's energy transition, with product mapping and bank-specific positioning for **Standard Chartered**, **Deutsche Bank**, and **UBS**.
+## Executive Summary
 
-It is designed to feel like an associate-level strategy pack that sits between market research and a product-origination toolkit:
+This repository is a portfolio-grade sustainable finance strategy sample focused on India's clean-energy and transition financing landscape.  
+It combines a country financing roadmap, a rule-based product mapping engine, and bank-specific positioning for Standard Chartered, Deutsche Bank, and UBS.  
+The product set mirrors real market practice across green, sustainability-linked, transition, blended, and capital-markets structures.  
+Verified statements are anchored to official public bank materials, while scenario numbers are clearly marked as illustrative assumptions.  
+All charts, reports, and appendix tables can be regenerated from source data with a single command: `python build.py`.
 
-- a **country roadmap** for India's clean-energy and transition financing needs
-- a **rule-based product mapping engine** that matches use cases to financing structures
-- **bank-specific views** that translate public positioning into actionable India opportunities
+## What This Repo Does
 
-## What Is In Scope
+The repository is designed to show how capital can be deployed across India's energy transition in a way that feels credible to sustainable-finance bankers and strategy teams.
 
-The repo focuses on the products most relevant to India's transition financing stack:
+- Builds an India transition financing roadmap across renewables, grids, storage, green buildings, EV ecosystems, industrial decarbonisation, and circular-economy use cases.
+- Maps financing products to use cases using transparent, rule-based logic rather than black-box modeling.
+- Compares how Standard Chartered, Deutsche Bank, and UBS are publicly positioned in sustainable and transition finance.
+- Produces consulting-style markdown reports, figure outputs, and appendix tables suitable for a portfolio or interview discussion.
 
-- green bonds
-- green loans and green project finance
-- sustainability-linked loans and bonds
-- transition finance loans and bonds
-- ESG-linked working capital / sustainable trade finance
-- blended finance
-- carbon-finance / results-based structures
-- green securitisation for portfolio refinancing
+## Key Outputs
 
-## Source Discipline
+- [India transition roadmap](./reports/india_transition_financing_roadmap.md)
+- [Product mapping playbook](./reports/product_mapping_playbook.md)
+- [Bank views: Standard Chartered, Deutsche Bank, UBS](./reports/bank_views_SC_DB_UBS.md)
+- [Strategy appendix](./reports/strategy_appendix.md)
+- [Product mapping table (CSV)](./reports/product_mapping_table.csv)
+- [Source ledger](./data/bank_source_ledger.csv)
 
-The research layer is intentionally conservative.
+## Repo Structure
 
-- **Verified facts** are drawn only from official public materials from the banks: annual reports, sustainability reports, framework pages, press releases, public product pages, and bank India pages where available.
-- **Illustrative numbers** are used only for the scenario model. They are clearly labeled as scenario assumptions and should not be read as market forecasts.
-- If a bank-specific point could not be verified from the reviewed public sources, it is marked **not verified** instead of being filled in from memory.
+```text
+.
+|-- .github/workflows/ci.yml
+|-- build.py
+|-- README.md
+|-- requirements.txt
+|-- data/
+|   |-- bank_source_ledger.csv
+|   |-- example_corporate_profiles.csv
+|   |-- india_transition_needs.csv
+|   `-- product_taxonomy.csv
+|-- figures/
+|   |-- bank_opportunity_matrix.png
+|   |-- capital_channel_split.png
+|   |-- product_recommendation_heatmap.png
+|   `-- subsector_financing_allocation.png
+|-- notebooks/
+|   |-- 01_india_transition_gap.ipynb
+|   |-- 02_product_mapping_engine.ipynb
+|   `-- 03_bank_views_SC_DB_UBS.ipynb
+|-- reports/
+|   |-- assumption_register.csv
+|   |-- bank_comparison_matrix.csv
+|   |-- bank_views_SC_DB_UBS.md
+|   |-- borrower_archetypes.csv
+|   |-- india_sector_priority_matrix.csv
+|   |-- india_transition_financing_roadmap.md
+|   |-- product_mapping_playbook.md
+|   |-- product_mapping_table.csv
+|   |-- source_confidence_register.csv
+|   `-- strategy_appendix.md
+`-- src/
+    |-- bank_views.py
+    |-- figures.py
+    |-- reporting.py
+    |-- scenarios.py
+    `-- taxonomy.py
+```
 
-Primary source references are stored in [data/bank_source_ledger.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/data/bank_source_ledger.csv).
+## Methodology
 
-## Project Components
+### Research discipline
 
-### 1. Country Roadmap
+- Uses only official public materials from the banks for positioning claims: annual reports, sustainability reports, public framework pages, public product pages, press releases, and India pages where available.
+- Stores those references in [data/bank_source_ledger.csv](./data/bank_source_ledger.csv).
+- Treats any unverified point as `not verified` instead of filling gaps with unsupported claims.
 
-[reports/india_transition_financing_roadmap.md](/C:/Users/Anklesh/Documents/Codex/4-5-26/reports/india_transition_financing_roadmap.md) frames India's transition financing stack across renewables, grids, storage, buildings, EV ecosystems and industrial decarbonisation. It also explains where project finance is better than bonds, and where SLLs fit better than green loans.
+### Scenario method
 
-### 2. Product Mapping Engine
+- Uses a directional annual financing anchor to size the India transition opportunity.
+- Splits that anchor across subsectors using explicit, illustrative scenario weights.
+- Allocates each subsector across broad capital channels: bank balance sheet, public markets, blended / DFI pools, and carbon-linked flows.
 
-[reports/product_mapping_playbook.md](/C:/Users/Anklesh/Documents/Codex/4-5-26/reports/product_mapping_playbook.md) and [reports/product_mapping_table.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/reports/product_mapping_table.csv) translate subsectors and fictional borrower profiles into ranked financing recommendations. The engine is rule-based and explainable, not black-box ML.
+### Product mapping method
 
-### 3. Bank Views
-
-[reports/bank_views_SC_DB_UBS.md](/C:/Users/Anklesh/Documents/Codex/4-5-26/reports/bank_views_SC_DB_UBS.md) compares how Standard Chartered, Deutsche Bank and UBS are publicly positioned in sustainable and transition finance, then turns that into India-specific commercial plays.
-
-## Data and Methodology
-
-### Data Files
-
-- [data/india_transition_needs.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/data/india_transition_needs.csv)
-  Transition subsectors, project characteristics and financing-relevant traits.
-- [data/product_taxonomy.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/data/product_taxonomy.csv)
-  Sustainable finance product definitions, borrower fit, covenant logic, advantages and constraints.
-- [data/example_corporate_profiles.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/data/example_corporate_profiles.csv)
-  Fictional but realistic India borrower cases across developers, utilities, corporates, EPCs, infra funds and financial institutions.
-- [data/bank_source_ledger.csv](/C:/Users/Anklesh/Documents/Codex/4-5-26/data/bank_source_ledger.csv)
-  Official source ledger used by the markdown reports.
-
-### Scenario Method
-
-- The roadmap uses a **directional** annual financing anchor based on public bank commentary that India's transition capital need is very large and can reach roughly the hundreds-of-billions-of-USD range over time.
-- Subsector allocations are **illustrative scenario splits** used to test product fit.
-- Funding-mix archetypes are stylized and should be treated as analytical scaffolding, not forecasts.
-
-### Mapping Method
-
-The product recommender scores each product against a use case using:
+The product recommender scores financing structures against a use case using:
 
 - capex intensity
-- ticket size
+- project or portfolio size
 - risk-sharing fit
 - KPI readiness
 - use-of-proceeds clarity
 - transition stage
 - borrower type
 - bond-market readiness
-- special-case biases for subsectors such as utility-scale renewables, industrial decarbonisation and EV ecosystems
+- subsector-specific commercial biases
 
-## Repository Structure
+### Instrument set
 
-```text
-.
-|-- README.md
-|-- requirements.txt
-|-- data
-|   |-- bank_source_ledger.csv
-|   |-- example_corporate_profiles.csv
-|   |-- india_transition_needs.csv
-|   `-- product_taxonomy.csv
-|-- notebooks
-|   |-- 01_india_transition_gap.ipynb
-|   |-- 02_product_mapping_engine.ipynb
-|   `-- 03_bank_views_SC_DB_UBS.ipynb
-|-- reports
-|   |-- bank_views_SC_DB_UBS.md
-|   |-- india_transition_financing_roadmap.md
-|   |-- product_mapping_playbook.md
-|   `-- product_mapping_table.csv
-`-- src
-    |-- __init__.py
-    |-- reporting.py
-    |-- scenarios.py
-    `-- taxonomy.py
-```
+The taxonomy includes:
 
-## Setup
+- green project finance and corporate green loans
+- green bonds and green securitisation
+- sustainability-linked loans, RCFs, and bonds
+- transition finance loans and transition bond variants
+- warehouse and aggregation facilities
+- refinancing and take-out structures
+- guarantees and partial risk-sharing facilities
+- blended finance and carbon-linked structures
+- advisory-led green / transition capital-markets solutions
+
+## How To Run
 
 Use Python 3.11+.
 
 ```bash
 pip install -r requirements.txt
+python build.py
 ```
 
-## How To Re-Run
+That single build command regenerates:
 
-Open the notebooks directly, or execute them from the command line.
+- all markdown reports in `reports/`
+- all portfolio figures in `figures/`
+- all appendix CSV tables in `reports/`
 
-```bash
-python -m jupyter nbconvert --to notebook --execute notebooks/01_india_transition_gap.ipynb --output-dir tmp
-python -m jupyter nbconvert --to notebook --execute notebooks/02_product_mapping_engine.ipynb --output-dir tmp
-python -m jupyter nbconvert --to notebook --execute notebooks/03_bank_views_SC_DB_UBS.ipynb --output-dir tmp
-```
+## How To Regenerate Or Explore
 
-Each notebook regenerates the corresponding markdown report in `reports/`.
+- Source data lives in [data/](./data/).
+- Reusable logic lives in [src/](./src/).
+- Exploratory notebooks remain in [notebooks/](./notebooks/) for transparency, but `build.py` is the reproducible source-of-truth path for output generation.
+- CI is configured in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) to run tests and rebuild outputs on push and pull request.
 
-## Folder Structure Suggestion
+## Sample Outputs
 
-If this analysis is reused in another repo or portfolio, keep the same separation:
+### Financing allocation
 
-- `data/` for the source-backed reference layer
-- `src/` for reusable scenario, taxonomy and reporting logic
-- `notebooks/` for transparent analytical workflows
-- `reports/` for decision-maker-facing outputs
+![Subsector financing allocation](./figures/subsector_financing_allocation.png)
 
-## Disclaimer
+### Capital-channel split
 
-This project is an educational work sample, not investment advice, and is **not affiliated with Standard Chartered, Deutsche Bank, UBS, or any other institution**.
+![Capital-channel split](./figures/capital_channel_split.png)
+
+### Product recommendation heatmap
+
+![Product recommendation heatmap](./figures/product_recommendation_heatmap.png)
+
+### Bank opportunity matrix
+
+![Bank opportunity matrix](./figures/bank_opportunity_matrix.png)
+
+## Limitations And Assumptions
+
+- The scenario numbers are **illustrative**, not forecasts or market-size claims.
+- Borrower archetypes are fictional and are included only to demonstrate product-fit logic.
+- Product scoring is rule-based by design; it prioritises explainability over statistical optimization.
+- Bank strategy recommendations combine verified public positioning with clearly labeled analyst inference.
+- The work sample is educational and analytical only. It is not investment advice and is not affiliated with Standard Chartered, Deutsche Bank, UBS, or any other institution.

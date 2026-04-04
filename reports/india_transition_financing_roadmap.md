@@ -12,6 +12,10 @@ Standard Chartered's February 2026 India transition survey says Indian corporate
 
 For this repository, the country-level annual financing stack is anchored to a **directional** public signal that India's transition could require roughly USD 300 billion per year over time, then split across subsectors using clearly labeled illustrative assumptions. Those subsector allocations are scenario inputs for product mapping, not verified market forecasts. [SC3]
 
+## Financing Allocation Snapshot
+
+![Subsector financing allocation chart](../figures/subsector_financing_allocation.png)
+
 ## Illustrative Annual Investment Stack
 
 | subsector | central_case_annual_investment_usd_bn | share_of_total_pct | capex_intensity | risk_profile | roadmap_commentary |
@@ -41,6 +45,8 @@ For this repository, the country-level annual financing stack is anchored to a *
 
 ## Capital-Pool View
 
+![Capital-channel split chart](../figures/capital_channel_split.png)
+
 | subsector | bank_balance_sheet_usd_bn | public_markets_usd_bn | blended_dfi_usd_bn | carbon_markets_usd_bn |
 | --- | --- | --- | --- | --- |
 | Utility-scale renewables | 28.3 | 28.3 | 12.2 | 12.2 |
@@ -60,6 +66,12 @@ For this repository, the country-level annual financing stack is anchored to a *
 | 12-36 months | Scale portfolio platforms and transition pathways | Aggregate distributed solar, storage, EV and retrofit assets into warehouse or securitisation-ready pools. Structure transition finance programmes for steel, cement and chemicals with milestone-based KPI calibration. | Green bonds, green securitisation, transition loans, SLBs, blended finance platforms. |
 | 3-5 years | Industrialise capital markets and blended pools | Move mature portfolios to repeat issuance, crowd in insurers and wealth capital, and use blended or carbon-linked structures for harder technologies such as green hydrogen, long-duration storage and process decarbonisation. | Programmatic green bonds, transition bonds, securitisation, blended finance, carbon finance. |
 
+## Related Files
+
+- [Transition subsectors](../data/india_transition_needs.csv)
+- [Source ledger](../data/bank_source_ledger.csv)
+- [Product mapping playbook](./product_mapping_playbook.md)
+
 ## Notes and Disclaimers
 
 - All subsector investment figures in this report are **illustrative scenario allocations** used to test product fit. They are not market-size claims and should not be cited as forecasts.
@@ -68,14 +80,14 @@ For this repository, the country-level annual financing stack is anchored to a *
 
 ## Sources
 
-- **SC2** Climate change - [link](https://www.sc.com/en/about/sustainability/position-statements/climate-change/)
-- **SC3** New report from Standard Chartered highlights optimistic corporate outlook on India's energy transition (2026-02-10) - [link](https://www.sc.com/in/news-media/sc-highlights-optimistic-corporate-outlook-on-indias-energy-transition/)
-- **SC4** Sustainable trade financing - [link](https://www.sc.com/en/corporate-investment-banking/transaction-banking/sustainable-trade-financing/)
-- **SC5** Apraava Energy secures USD 92 million from British International Investment (2025-12-03) - [link](https://www.sc.com/in/news-media/apraava-energy-investment/)
-- **SC6** Annual Report 2025 Sustainability Review (2026-03-31) - [link](https://www.sc.com/en/uploads/sites/66/content/docs/annual-report-2025-sustainability-review.pdf)
-- **DB2** Deutsche Bank sets new 2030 sustainable and transition finance target and publishes its initial Transition Finance Framework (2025-11-17) - [link](https://www.db.com/news/detail/20251117-deutsche-bank-sets-new-2030-sustainable-and-transition-finance-target-and-publishes-its-initial-transition-finance-framework?language_id=1)
-- **DB3** India's path to net zero - [link](https://flow.db.com/more/esg/india-s-path-to-net-zero?language_id=1)
-- **DB4** Project finance explained (2025-07-16) - [link](https://flow.db.com/Topics/trade-finance/project-finance-explained?language_id=1)
-- **DB5** REC: financing India's renewable energy strategy (2) (2025-01-15) - [link](https://flow.db.com/case-studies/rec-financing-indias-renewable-energy-strategy-2)
-- **DB6** REC: supporting India's renewable energy strategy (1) (2025-01-15) - [link](https://flow.db.com/case-studies/rec-supporting-india-s-renewable-energy-strategy-1)
-- **UBS5** Sustainability Report Supplement 2025 (2026-03-13) - [link](https://www.ubs.com/global/en/investor-relations/financial-information/annual-reporting/_jcr_content/root/contentarea/mainpar/toplevelgrid_1041865/col_2/linklistreimagined_c/link_copy.0290640933.file/PS9jb250ZW50L2RhbS9hc3NldHMvY2MvaW52ZXN0b3ItcmVsYXRpb25zL2FubnVhbC1yZXBvcnQvMjAyNS9zdXN0YWluYWJpbGl0eS1yZXBvcnQtc3VwcGxlbWVudC0yMDI1LnBkZg%3D%3D/sustainability-report-supplement-2025.pdf)
+- **SC2** Climate change - [source](https://www.sc.com/en/about/sustainability/position-statements/climate-change/)
+- **SC3** New report from Standard Chartered highlights optimistic corporate outlook on India's energy transition (2026-02-10) - [source](https://www.sc.com/in/news-media/sc-highlights-optimistic-corporate-outlook-on-indias-energy-transition/)
+- **SC4** Sustainable trade financing - [source](https://www.sc.com/en/corporate-investment-banking/transaction-banking/sustainable-trade-financing/)
+- **SC5** Apraava Energy secures USD 92 million from British International Investment (2025-12-03) - [source](https://www.sc.com/in/news-media/apraava-energy-investment/)
+- **SC6** Annual Report 2025 Sustainability Review (2026-03-31) - [source](https://www.sc.com/en/uploads/sites/66/content/docs/annual-report-2025-sustainability-review.pdf)
+- **DB2** Deutsche Bank sets new 2030 sustainable and transition finance target and publishes its initial Transition Finance Framework (2025-11-17) - [source](https://www.db.com/news/detail/20251117-deutsche-bank-sets-new-2030-sustainable-and-transition-finance-target-and-publishes-its-initial-transition-finance-framework?language_id=1)
+- **DB3** India's path to net zero - [source](https://flow.db.com/more/esg/india-s-path-to-net-zero?language_id=1)
+- **DB4** Project finance explained (2025-07-16) - [source](https://flow.db.com/Topics/trade-finance/project-finance-explained?language_id=1)
+- **DB5** REC: financing India's renewable energy strategy (2) (2025-01-15) - [source](https://flow.db.com/case-studies/rec-financing-indias-renewable-energy-strategy-2)
+- **DB6** REC: supporting India's renewable energy strategy (1) (2025-01-15) - [source](https://flow.db.com/case-studies/rec-supporting-india-s-renewable-energy-strategy-1)
+- **UBS5** Sustainability Report Supplement 2025 (2026-03-13) - [source](https://www.ubs.com/global/en/investor-relations/financial-information/annual-reporting/_jcr_content/root/contentarea/mainpar/toplevelgrid_1041865/col_2/linklistreimagined_c/link_copy.0290640933.file/PS9jb250ZW50L2RhbS9hc3NldHMvY2MvaW52ZXN0b3ItcmVsYXRpb25zL2FubnVhbC1yZXBvcnQvMjAyNS9zdXN0YWluYWJpbGl0eS1yZXBvcnQtc3VwcGxlbWVudC0yMDI1LnBkZg%3D%3D/sustainability-report-supplement-2025.pdf)

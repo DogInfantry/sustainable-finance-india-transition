@@ -1,0 +1,6 @@
+Area,Assumption,Treatment,Confidence,Why it matters
+Country financing anchor,USD 300bn annual transition financing need used as the central illustrative anchor.,Illustrative scenario input,Medium,Sets the order-of-magnitude envelope for subsector allocation and capital-pool sizing.
+Subsector splits,Allocation weights translate the country anchor across eight transition subsectors.,Illustrative scenario input,Medium,Determines where products are shown to scale first.
+Capital-channel mix,"Each subsector is split across bank balance sheet, public markets, blended / DFI, and carbon-linked pools.",Illustrative scenario input,Medium-Low,Frames where each bank can realistically originate or distribute capital.
+Borrower archetypes,Corporate profiles are fictional but realistic and are not intended to represent actual clients.,Design choice,High,Allows product-stack demonstration without client confidentiality concerns.
+Product scoring,Rule-based scoring prioritises explainability over statistical optimisation.,Method choice,High,Keeps the work sample interpretable for strategy and origination discussions.
