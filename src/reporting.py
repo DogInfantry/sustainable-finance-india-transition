@@ -258,3 +258,97 @@ def render_product_mapping_playbook(
     )
 
     return "\n".join(sections) + "\n"
+
+
+def render_bank_views_note(
+    bank_positioning: pd.DataFrame,
+    bank_focus_matrix: pd.DataFrame,
+    bank_plays: pd.DataFrame,
+    source_ledger: pd.DataFrame | None = None,
+) -> str:
+    """Render the bank-specific strategy note."""
+
+    sources = load_sources() if source_ledger is None else source_ledger
+    sections = [
+        "# Bank Views: Standard Chartered, Deutsche Bank and UBS",
+        "",
+        "## Executive Summary",
+        "",
+        "- **Standard Chartered** is the clearest on-the-ground India transition player in the reviewed public set: it combines India-specific transition messaging with project finance, sustainable trade finance and cross-border sustainable-finance frameworks. [SC2][SC3][SC4][SC5][SC7][SC8]",
+        "- **Deutsche Bank** is strongest where India's transition overlaps with structured lending and hard-to-abate transition finance. Its 2030 sustainable and transition finance target, Transition Finance Framework and India renewables financing content all support that reading. [DB1][DB2][DB3][DB5]",
+        "- **UBS** looks most competitive in India when the solution is advisory- and capital-markets-led rather than balance-sheet-heavy. That is an inference from its public India, Investment Bank and sustainability disclosures; a large India project-finance lending franchise was not verified from the sources reviewed. [UBS2][UBS3][UBS4][UBS5][UBS7]",
+        "",
+        "## Bank Positioning Comparison",
+        "",
+        markdown_table(bank_positioning),
+        "",
+        "## Bank vs Use-Case Focus Matrix",
+        "",
+        markdown_table(bank_focus_matrix),
+        "",
+    ]
+
+    for bank, frame in bank_plays.groupby("bank", sort=False):
+        sections.extend(
+            [
+                f"## {bank}",
+                "",
+                "The opportunities below combine verified public positioning with analyst inference on where that positioning is most commercially advantaged in India.",
+                "",
+                markdown_table(
+                    frame.rename(
+                        columns={
+                            "play": "Play",
+                            "products": "Products",
+                            "client_types": "Client types",
+                            "why_now": "Why now",
+                        }
+                    )[
+                        ["Play", "Products", "Client types", "Why now"]
+                    ]
+                ),
+                "",
+            ]
+        )
+
+    sections.extend(
+        [
+            "## How These Banks Can Win in India",
+            "",
+            "- **Standard Chartered:** win by being the relationship-led arranger that connects India-originated clean-energy demand to cross-border bank, DFI and bond-market liquidity, especially for renewables, grids, EV ecosystems and financial-institution on-lending.",
+            "- **Deutsche Bank:** win by owning the financing dialogue for transition-complex sectors and structured lending situations where project finance, AR solutions, letters of credit, ECB loans and transition KPI design need to sit together.",
+            "- **UBS:** win by turning Indian transition assets into investable paper for global institutional and private capital, especially via green or transition bonds, private placements, structured notes and advisory-led financing for mature portfolios.",
+            "",
+            "## Notes",
+            "",
+            "- Where a statement reflects direct public evidence, it is cited to the source list below.",
+            "- Where a statement reflects analyst inference from reviewed public materials, the section says so explicitly.",
+            "- Absence of a verified public disclosure has been marked as **not verified** rather than assumed away.",
+            "",
+            "## Sources",
+            "",
+            format_source_list(
+                [
+                    "SC2",
+                    "SC3",
+                    "SC4",
+                    "SC5",
+                    "SC6",
+                    "SC7",
+                    "SC8",
+                    "DB1",
+                    "DB2",
+                    "DB3",
+                    "DB5",
+                    "UBS2",
+                    "UBS3",
+                    "UBS4",
+                    "UBS5",
+                    "UBS7",
+                ],
+                sources,
+            ),
+        ]
+    )
+
+    return "\n".join(sections) + "\n"
