@@ -123,8 +123,6 @@ The energy transition is not just environmental — it's socioeconomic. India ha
 ## Related Work
 
 - 📊 [Investment Risk Management Console](https://github.com/DogInfantry) — Real-time VaR/CVaR dashboard for Nifty 50 with India-specific stress scenarios
-- 📄 [India Critical Minerals & Green Steel Transition Report](https://substack.com/@ankleshrawat) — 19-page strategic advisory report on hard-to-abate sector decarbonisation
-- 📈 [Tata Power Equity Research (GEARED Framework)](https://substack.com/@ankleshrawat) — Institutional-grade SOTP valuation with ESG integration
 
 ---
 
