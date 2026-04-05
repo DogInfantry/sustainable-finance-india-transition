@@ -127,3 +127,164 @@ def _save_figure(fig: plt.Figure, output_path: Path | str) -> Path:
     fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     return path
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# COMMERCIAL LAYER — new figure functions (appended; existing code untouched)
+# ════════════════════════════════════════════════════════════════════════════
+
+
+def plot_capital_allocation_by_sector(
+    volume_df: "pd.DataFrame",
+    raw_deal_df: "pd.DataFrame",
+    output_path: str = "figures/capital_allocation_by_sector.png",
+) -> None:
+    """Horizontal stacked bar: annual financing volume by subsector, stacked by capital channel."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    from src.constants import CAPITAL_CHANNELS, SUBSECTORS
+
+    merged = volume_df.merge(raw_deal_df[["subsector", "debt_pct", "bond_pct", "equity_pct", "grant_pct"]], on="subsector")
+
+    # Compute per-channel volumes (USD mn)
+    merged["Bank Debt"]   = merged["annual_volume_usd_mn"] * (merged["debt_pct"] - merged["bond_pct"]) / 100
+    merged["Bonds"]       = merged["annual_volume_usd_mn"] * merged["bond_pct"] / 100
+    merged["Blended/DFI"] = merged["annual_volume_usd_mn"] * merged["grant_pct"] / 100
+    merged["Equity"]      = merged["annual_volume_usd_mn"] * merged["equity_pct"] / 100
+
+    # Sort by total volume ascending (horizontal bar — smallest at top)
+    merged = merged.sort_values("annual_volume_usd_mn", ascending=True)
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    colours = {"Bank Debt": "#2166ac", "Bonds": "#1a9641", "Blended/DFI": "#f46d43", "Equity": "#762a83"}
+    lefts = np.zeros(len(merged))
+    for channel in CAPITAL_CHANNELS:
+        values = merged[channel].values
+        ax.barh(merged["subsector"], values, left=lefts, color=colours[channel], label=channel)
+        lefts += values
+
+    ax.set_xlabel("Annual Financing Volume (USD mn)", fontname="DejaVu Sans")
+    ax.set_title("Capital Allocation by Sector", fontname="DejaVu Sans", fontweight="bold")
+    ax.legend(loc="lower right", fontsize=9)
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_product_dominance_by_sector(
+    lifecycle_df: "pd.DataFrame",
+    raw_deal_df: "pd.DataFrame",
+    output_path: str = "figures/product_dominance_by_sector.png",
+) -> None:
+    """Heatmap: subsectors × PRODUCT_CATEGORIES, intensity = stage-weighted volume."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    from src.constants import PRODUCT_CATEGORIES, PRODUCT_CATEGORY_MAP, STAGE_VOLUME_WEIGHTS, SUBSECTORS
+
+    vol = raw_deal_df[["subsector", "deal_size_usd_mn", "deal_count_annual_estimate"]].copy()
+    vol["annual_volume_usd_mn"] = vol["deal_size_usd_mn"] * vol["deal_count_annual_estimate"]
+
+    merged = lifecycle_df.merge(vol[["subsector", "annual_volume_usd_mn"]], on="subsector")
+    merged["stage_volume"] = merged["annual_volume_usd_mn"] * merged["stage"].map(STAGE_VOLUME_WEIGHTS)
+    merged["product_category"] = merged["primary_product"].map(PRODUCT_CATEGORY_MAP)
+
+    pivot = merged.groupby(["subsector", "product_category"])["stage_volume"].sum().unstack(fill_value=0)
+    for cat in PRODUCT_CATEGORIES:
+        if cat not in pivot.columns:
+            pivot[cat] = 0
+    pivot = pivot[PRODUCT_CATEGORIES].reindex(SUBSECTORS)
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    im = ax.imshow(pivot.values, aspect="auto", cmap="YlOrRd")
+    ax.set_xticks(range(len(PRODUCT_CATEGORIES)))
+    ax.set_xticklabels(PRODUCT_CATEGORIES, fontname="DejaVu Sans")
+    ax.set_yticks(range(len(SUBSECTORS)))
+    ax.set_yticklabels(SUBSECTORS, fontname="DejaVu Sans")
+    plt.colorbar(im, ax=ax, label="Stage-weighted Volume (USD mn)")
+    ax.set_title("Product Dominance by Sector", fontname="DejaVu Sans", fontweight="bold")
+    fig.text(0.5, 0.01, "Note: SLL classified as Loan (bank lending instrument).",
+             ha="center", fontsize=8, style="italic")
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_lifecycle_heatmap(
+    matrix_df: "pd.DataFrame",
+    output_path: str = "figures/lifecycle_financing_flow.png",
+) -> None:
+    """Heatmap: subsectors × lifecycle stages, colour = primary product category."""
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+    import numpy as np
+    from src.constants import LIFECYCLE_STAGES, PRODUCT_CATEGORY_MAP, SUBSECTORS
+
+    CAT_COLOURS = {
+        "Loan":             "#2166ac",
+        "Bond":             "#1a9641",
+        "Blended Finance":  "#f46d43",
+        "Equity/Mezzanine": "#762a83",
+    }
+
+    pivot = matrix_df.pivot(index="subsector", columns="stage", values="primary_product")
+    pivot = pivot.reindex(index=SUBSECTORS, columns=LIFECYCLE_STAGES)
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    for row_i, sub in enumerate(SUBSECTORS):
+        for col_i, stage in enumerate(LIFECYCLE_STAGES):
+            product = pivot.loc[sub, stage]
+            cat = PRODUCT_CATEGORY_MAP.get(product, "Loan")
+            colour = CAT_COLOURS[cat]
+            ax.add_patch(plt.Rectangle((col_i, row_i), 1, 1, color=colour, ec="white", lw=1.5))
+            ax.text(col_i + 0.5, row_i + 0.5, product, ha="center", va="center",
+                    fontsize=7, color="white", fontname="DejaVu Sans", wrap=True)
+
+    ax.set_xlim(0, len(LIFECYCLE_STAGES))
+    ax.set_ylim(0, len(SUBSECTORS))
+    ax.set_xticks([i + 0.5 for i in range(len(LIFECYCLE_STAGES))])
+    ax.set_xticklabels(LIFECYCLE_STAGES, fontname="DejaVu Sans")
+    ax.set_yticks([i + 0.5 for i in range(len(SUBSECTORS))])
+    ax.set_yticklabels(SUBSECTORS, fontname="DejaVu Sans")
+    ax.set_title("Lifecycle Financing Flow by Subsector", fontname="DejaVu Sans", fontweight="bold")
+
+    legend_patches = [mpatches.Patch(color=c, label=l) for l, c in CAT_COLOURS.items()]
+    ax.legend(handles=legend_patches, loc="upper right", fontsize=8)
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+
+
+def plot_bank_opportunity_heatmap(
+    mapped_df: "pd.DataFrame",
+    output_path: str = "figures/bank_opportunity_heatmap.png",
+) -> None:
+    """Heatmap: top sectors × lifecycle stages, intensity = bank capability fit score."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from src.constants import LIFECYCLE_STAGES
+
+    subsectors = list(mapped_df["subsector"].unique())
+    pivot = mapped_df.pivot(index="subsector", columns="stage", values="fit_score_normalised")
+    pivot = pivot.reindex(index=subsectors, columns=LIFECYCLE_STAGES).fillna(0)
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    im = ax.imshow(pivot.values, aspect="auto", cmap="Blues", vmin=0, vmax=5)
+    ax.set_xticks(range(len(LIFECYCLE_STAGES)))
+    ax.set_xticklabels(LIFECYCLE_STAGES, fontname="DejaVu Sans")
+    ax.set_yticks(range(len(subsectors)))
+    ax.set_yticklabels(subsectors, fontname="DejaVu Sans")
+
+    for row_i in range(len(subsectors)):
+        for col_i in range(len(LIFECYCLE_STAGES)):
+            val = pivot.values[row_i, col_i]
+            ax.text(col_i, row_i, f"{val:.1f}", ha="center", va="center",
+                    fontsize=9, color="black" if val < 3 else "white", fontname="DejaVu Sans")
+
+    plt.colorbar(im, ax=ax, label="Capability Fit Score (0–5)")
+    ax.set_title("Bank Opportunity Heatmap — Top Sectors × Lifecycle Stage",
+                 fontname="DejaVu Sans", fontweight="bold")
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)

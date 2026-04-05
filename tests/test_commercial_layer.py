@@ -303,3 +303,52 @@ def test_bank_strategy_empty_priority_raises():
                                    "rank", "top5_flag"])
     with pytest.raises(ValueError, match="No subsectors"):
         build_bank_strategy_output(priority_df=empty, lifecycle_df=lifecycle)
+
+
+import os
+from src.deal_economics import load_deal_economics, compute_annual_financing_volume
+from src.lifecycle import build_lifecycle_matrix
+from src.bank_strategy import map_capabilities_to_sectors, load_bank_profile
+from src.sector_priority import build_sector_priority_ranking, get_top_n
+
+# Import new figure functions (appended to existing figures.py)
+from src.figures import (
+    plot_capital_allocation_by_sector,
+    plot_product_dominance_by_sector,
+    plot_lifecycle_heatmap,
+    plot_bank_opportunity_heatmap,
+)
+
+
+def test_plot_capital_allocation_creates_file(tmp_path):
+    raw_df = load_deal_economics()
+    vol_df = compute_annual_financing_volume(raw_df)
+    out = str(tmp_path / "capital.png")
+    plot_capital_allocation_by_sector(vol_df, raw_df, output_path=out)
+    assert os.path.exists(out) and os.path.getsize(out) > 0
+
+
+def test_plot_product_dominance_creates_file(tmp_path):
+    raw_df = load_deal_economics()
+    lifecycle = build_lifecycle_matrix()
+    out = str(tmp_path / "dominance.png")
+    plot_product_dominance_by_sector(lifecycle, raw_df, output_path=out)
+    assert os.path.exists(out) and os.path.getsize(out) > 0
+
+
+def test_plot_lifecycle_heatmap_creates_file(tmp_path):
+    lifecycle = build_lifecycle_matrix()
+    out = str(tmp_path / "lifecycle.png")
+    plot_lifecycle_heatmap(lifecycle, output_path=out)
+    assert os.path.exists(out) and os.path.getsize(out) > 0
+
+
+def test_plot_bank_opportunity_heatmap_creates_file(tmp_path):
+    lifecycle = build_lifecycle_matrix()
+    priority = build_sector_priority_ranking()
+    top5 = get_top_n(priority, 5)
+    caps = load_bank_profile()
+    mapped = map_capabilities_to_sectors(caps, top5, lifecycle)
+    out = str(tmp_path / "bank.png")
+    plot_bank_opportunity_heatmap(mapped, output_path=out)
+    assert os.path.exists(out) and os.path.getsize(out) > 0
