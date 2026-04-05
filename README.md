@@ -1,288 +1,214 @@
-# Sustainable Finance India Transition
+<div align="center">
 
-India-focused research on green bonds, ESG integration, climate risk, and transition finance.
+# 🌿 Sustainable Finance — India Transition
 
-[![Status](https://img.shields.io/badge/status-active-brightgreen)]()
-[![Domain](https://img.shields.io/badge/domain-sustainable%20finance-blue)]()
-[![Markets](https://img.shields.io/badge/markets-capital%20markets-purple)]()
-[![Focus](https://img.shields.io/badge/focus-green%20bonds-success)]()
-[![Focus](https://img.shields.io/badge/focus-esg%20integration-blueviolet)]()
-[![Focus](https://img.shields.io/badge/focus-climate%20risk-orange)]()
-[![Focus](https://img.shields.io/badge/focus-transition%20finance-red)]()
-[![Instruments](https://img.shields.io/badge/instruments-SLBs%20%7C%20SLLs%20%7C%20project%20finance-yellow)]()
-[![Use Case](https://img.shields.io/badge/use--case-investment%20research-black)]()
-[![License](https://img.shields.io/badge/license-MIT-lightgrey)]()
+**Original research on India's green bond markets, ESG frameworks, climate risk modeling,
+SEBI/RBI policy analysis, and transition finance for hard-to-abate sectors.**
 
-**Research on India's sustainable finance ecosystem, green bond markets, ESG integration frameworks, regulatory policy evolution, and transition finance mechanics for hard-to-abate sectors.**
+[![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active-22c55e?style=for-the-badge)]()
+[![Market](https://img.shields.io/badge/Market-India-FF9933?style=for-the-badge)]()
 
----
+> Bridging SEBI/RBI regulatory intent, Indian capital market structure, and climate-aligned
+> capital allocation — with data, original frameworks, and quantitative models.
 
-## Overview
+[📗 Green Bonds](#-green-bond-markets) · [📊 ESG Integration](#-esg-data--integration) · [🌡️ Climate Risk](#️-climate-risk-modeling) · [🏛️ Policy](#️-sebi--rbi-policy) · [⚙️ Transition Finance](#️-transition-finance)
 
-This repository documents original research, proprietary frameworks, quantitative models, and policy analysis on India's sustainable finance transition. It bridges regulatory intent (SEBI, RBI directives), market structure (green bond issuance, ESG data gaps), and capital allocation mechanisms in Indian capital markets.
-
-**Key Outputs:**
-- Original frameworks for ESG integration in emerging markets
-- Climate risk models calibrated to Indian macro/sector data
-- Transition finance structuring for cement, steel, power sectors
-- SEBI/RBI policy timeline & implementation gaps
-- Green bond valuation & credit spread analysis
+</div>
 
 ---
 
-## `#green-bonds` | Green Bond Markets & Issuance
+## ⚡ Scope at a Glance
 
-Analysis of India's green bond ecosystem, issuance trends, pricing mechanics, and credit spread attribution.
-
-**What's Here:**
-- Green bond issuance data (sovereign, corporate, PSU) by year/sector
-- Valuation spreads vs. vanilla bonds (duration, liquidity, coupon effects)
-- Eligibility frameworks (SEBI green bond guidelines, external review process)
-- Market depth & investor participation (FIIs, domestic institutions, retail)
-
-**Use Case:** Benchmark Indian green bond valuation; assess cost of capital for green projects vs. conventional financing.
+| Domain | Coverage | Key Output |
+|--------|----------|------------|
+| 🟢 **Green Bonds** | Sovereign, corporate & PSU issuance · 2015–present | Spread attribution vs. vanilla bonds; valuation model |
+| 📊 **ESG Integration** | Nifty 50 + selected mid-cap universe | Weighted scoring model; sector benchmarks; data gap analysis |
+| 🌡️ **Climate Risk** | Agriculture, power, infra, auto, cement | Portfolio Climate VaR; transition scenario stress tests |
+| 🏛️ **SEBI / RBI Policy** | BRSR, green deposit frameworks, RBI circulars | Policy timeline; implementation gap analysis |
+| ⚙️ **Transition Finance** | Cement, steel, coal power | Decarbonization capex DCF; SLB/transition bond structuring |
 
 ---
 
-## `#esg-integration` | ESG Data & Integration Frameworks
+## 📗 Green Bond Markets
 
-Original frameworks for ESG integration in Indian equity and debt markets, addressing data gaps and emerging market-specific methodologies.
+Analysis of India's green bond ecosystem — issuance trends, pricing mechanics, and credit spread attribution across sovereign, PSU, and corporate issuers.
 
-**What's Here:**
-- ESG data gaps in Indian mid/small-cap universe
-- Sector-specific ESG metrics (e.g., thermal coal exposure, water stress in manufacturing)
-- Equity screening & scoring models (weighted ESG scoring for Indian constituents)
-- Fixed income ESG overlays (credit spread attribution to ESG factors)
-- Case studies: Nifty 50 ESG integration, state-owned enterprise ESG transition readiness
+- Green bond issuance history by year, sector, and issuer type (SEBI registry data)
+- Spread attribution vs. duration-matched vanilla bonds — liquidity, coupon, and greenium effects
+- Eligibility framework mapping (SEBI green bond guidelines + external review process)
+- Investor participation breakdown: FIIs, domestic institutions, retail
 
-**Use Case:** Design ESG criteria for equity/debt portfolios; assess ESG-driven value creation in Indian companies.
+**Key Finding:** Green bonds trade tighter than vanilla bonds on a duration-adjusted basis, signalling institutional appetite — but end-use verification and impact measurement remain structurally weak.
 
 ---
 
-## `#climate-risk` | Climate Risk Modeling & Stress Testing
+## 📊 ESG Data & Integration
 
-Quantitative models for climate risk assessment in Indian capital markets, including physical and transition risk scenarios.
+Original frameworks for ESG integration in Indian equity and debt markets, addressing the data gaps specific to emerging market universes.
 
-**What's Here:**
-- Climate risk taxonomy (physical risk: rainfall, flooding, heat; transition risk: carbon pricing, technology disruption)
-- Sector stress tests (agriculture, power, infrastructure, auto, cement)
-- Equity portfolio climate VaR (Value-at-Risk) under transition scenarios
-- Fixed income climate spread scenarios (basis point moves under climate policy shocks)
-- Scenario design: India-specific climate policy pathways (net-zero 2070, sectoral emissions caps)
+- ESG data coverage analysis: mid/small-cap universe <40% disclosed
+- Sector-specific metrics: thermal coal exposure, water stress in manufacturing, governance flags
+- Weighted ESG scoring model for Nifty 50 constituents
+- Fixed income ESG overlay: credit spread attribution to ESG factor quartiles
+- Case study: Nifty 50 ESG integration; SOE transition readiness assessment
 
-**Use Case:** Stress-test portfolios for climate policy shocks; size climate risk premia in Indian markets.
-
----
-
-## `#sebi-rbi-policy` | Regulatory Frameworks & Policy Analysis
-
-Timeline, implementation mechanics, and gaps in SEBI/RBI sustainable finance directives.
-
-**What's Here:**
-- SEBI Business Responsibility & Sustainability Reporting (BRSR) evolution
-- RBI climate risk circular & disclosure expectations
-- Green deposit frameworks & ESG lending guidelines
-- Policy roadmap (targets, enforcement, international alignment)
-- Implementation gaps: data standardization, third-party verification, enforcement capacity
-
-**Use Case:** Track regulatory landscape; understand compliance requirements; identify policy arbitrage opportunities.
+**Key Finding:** No significant correlation between ESG score and returns in Indian equities yet — but sector bifurcation is pronounced: IT/pharma vs. metals/mining show a 70+ percentile gap on environmental scores.
 
 ---
 
-## `#transition-finance` | Transition Finance for Hard-to-Abate Sectors
+## 🌡️ Climate Risk Modeling
 
-Structuring frameworks for financing decarbonization in cement, steel, coal power, and other carbon-intensive industries.
+Quantitative stress testing for physical and transition climate risks across Indian capital markets.
 
-**What's Here:**
-- Sector decarbonization pathways (e.g., cement: fuel switching, clinker substitution, CCS; steel: scrap-based EAF, hydrogen DRI)
-- Transition finance instrument design (transition bonds, green-linked loans, sustainability-linked bonds)
-- Capex requirement models & investment timing
+- Climate risk taxonomy: physical (rainfall, flooding, heat stress) vs. transition (carbon pricing, tech disruption)
+- Sector stress tests: agriculture, power, infrastructure, auto, cement
+- Portfolio Climate VaR under 1.5°C, 2°C, and delayed-transition scenarios
+- Fixed income spread scenarios: basis-point moves under carbon policy shocks
+- India-specific scenario design: net-zero 2070 pathway, sectoral emissions caps
+
+**Key Finding:** Under a 2°C transition scenario (carbon price ₹5,000/tonne by 2030), energy and materials sectors face 15–25% earnings headwinds. Indian equity markets show no climate risk premium yet — alpha opportunity for climate-informed positioning.
+
+---
+
+## 🏛️ SEBI & RBI Policy
+
+Timeline, implementation mechanics, and gap analysis of India's sustainable finance regulatory architecture.
+
+- **SEBI BRSR** — evolution from voluntary to mandatory; disclosure quality assessment
+- **RBI Climate Risk Circular** — principles-based guidance; enforcement timeline uncertainty
+- Green deposit frameworks and ESG lending guidelines
+- International alignment: TCFD, EU Taxonomy comparisons
+- Implementation gaps: data standardisation, third-party verification, enforcement capacity
+
+**Key Finding:** SEBI's BRSR rollout is structurally comprehensive but enforcement is nascent. RBI guidance is principles-based, not rules-based — creating compliance ambiguity for regulated entities.
+
+---
+
+## ⚙️ Transition Finance
+
+Structuring frameworks and financial models for decarbonisation of hard-to-abate sectors in India.
+
+- Sector decarbonisation pathways:
+  - **Cement** — fuel switching, clinker substitution, CCS readiness
+  - **Steel** — scrap-based EAF, hydrogen DRI transition economics
+  - **Coal Power** — plant retirement sequencing, refinancing gap modelling
+- Instrument design: transition bonds, SLBs, sustainability-linked loans, green project finance
+- Capex requirement models, IRR sensitivity to carbon price
 - Carbon economics: cost of abatement, carbon credit value, competitive impact
-- Case studies: PSU power plant retirement + renewable transition; cement kiln modernization financing
+- Case studies: PSU power plant retirement + renewable refinancing; cement kiln modernisation
 
-**Use Case:** Structure transition financing for corporate clients; assess decarbonization capex viability; design transition-linked KPIs.
+**Key Finding:** Cement sector decarbonisation cost is ₹8–12 per unit — viable within margin structure if carbon price exceeds ₹3,000/tonne. Green-linked bond uptake is limited by KPI verification burden.
 
 ---
 
-## Repository Structure
+## 🗂️ Repository Structure
 
 ```
 sustainable-finance-india-transition/
-├── README.md                          # This file
-├── data/
+│
+├── 📁 data/
 │   ├── green_bonds/
-│   │   ├── issuance_history.csv       # SEBI green bond registry data
-│   │   └── pricing_spreads.parquet    # Credit spreads vs. vanilla bonds
+│   │   ├── issuance_history.csv          # SEBI green bond registry (2015–present)
+│   │   └── pricing_spreads.parquet       # Credit spreads vs. vanilla bonds
 │   ├── esg_scores/
-│   │   ├── nifty50_esg_metrics.csv    # Company ESG scoring
-│   │   └── sector_benchmarks.csv      # Sector-level ESG percentiles
+│   │   ├── nifty50_esg_metrics.csv       # Company-level ESG scoring
+│   │   └── sector_benchmarks.csv         # Sector ESG percentiles
 │   ├── climate_scenarios/
-│   │   ├── india_net_zero_2070.json   # Policy scenario parameters
-│   │   └── sector_emissions.parquet   # Baseline & transition emissions
+│   │   ├── india_net_zero_2070.json      # Policy scenario parameters
+│   │   └── sector_emissions.parquet      # Baseline & transition emissions
 │   └── policy_docs/
-│       ├── sebi_brsr_guidelines.pdf   # Regulatory text
+│       ├── sebi_brsr_guidelines.pdf
 │       └── rbi_climate_risk_circular.pdf
-├── frameworks/
-│   ├── esg_screening_model.ipynb      # Equity screening methodology
-│   ├── climate_risk_taxonomy.md       # Risk categorization & metrics
-│   ├── transition_finance_template.xlsx # Structuring checklist
-│   └── green_bond_valuation.ipynb     # Pricing attribution model
-├── models/
-│   ├── portfolio_climate_var.py       # Equity portfolio stress test
-│   ├── sector_decarbonization_dcf.py  # Capex & IRR modeling
-│   └── esg_credit_spread_model.R      # Fixed income ESG factor extraction
-└── case_studies/
-    ├── tata_power_transition_review.md
-    ├── cement_sector_abatement_economics.md
-    └── nifty50_esg_integration_walkthrough.ipynb
+│
+├── 📁 notebooks/                          # Jupyter analysis workflows
+├── 📁 src/                                # Python models & scoring engines
+│   ├── portfolio_climate_var.py          # Equity portfolio climate stress test
+│   ├── sector_decarbonization_dcf.py     # Capex & IRR modelling
+│   └── esg_credit_spread_model.py        # Fixed income ESG factor extraction
+└── 📁 reports/                            # Formatted research outputs
 ```
 
 ---
 
-## Quick Start
-
-### 1. Clone & Install
+## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/DogInfantry/sustainable-finance-india-transition.git
 cd sustainable-finance-india-transition
-git checkout feature/commercial-layer
-
-# Install dependencies
-pip install pandas numpy scipy scikit-learn jupyter openpyxl seaborn matplotlib
+pip install -r requirements.txt
 ```
 
-### 2. Load Data
-
 ```python
-import pandas as pd
+import pandas as pd, json
 
-# Green bond issuance
-gb_data = pd.read_csv('data/green_bonds/issuance_history.csv')
+# Green bond data
+gb = pd.read_csv('data/green_bonds/issuance_history.csv')
 spreads = pd.read_parquet('data/green_bonds/pricing_spreads.parquet')
 
 # ESG metrics
 esg = pd.read_csv('data/esg_scores/nifty50_esg_metrics.csv')
 
 # Climate scenarios
-import json
 with open('data/climate_scenarios/india_net_zero_2070.json') as f:
     scenarios = json.load(f)
 ```
 
-### 3. Run Models
-
 ```python
-# Climate VaR analysis
-from models.portfolio_climate_var import PortfolioClimateStress
-pcs = PortfolioClimateStress(portfolio_holdings, esg_ratings)
-var_results = pcs.stress_test(scenario='transition_2030')
+# Run climate stress test
+from src.portfolio_climate_var import PortfolioClimateStress
+results = PortfolioClimateStress(holdings, esg_ratings).stress_test(scenario='transition_2030')
 
-# Sector capex modeling
-from models.sector_decarbonization_dcf import SectorDCF
-dcf = SectorDCF(sector='cement', technology='clinker_substitution')
-project_npv = dcf.run_valuation(capex_year=2025, carbon_price=5000)
+# Sector decarbonisation DCF
+from src.sector_decarbonization_dcf import SectorDCF
+npv = SectorDCF(sector='cement', technology='clinker_substitution').run_valuation(capex_year=2025, carbon_price=5000)
 ```
 
-### 4. Review Frameworks & Case Studies
+---
 
-- Start with `frameworks/climate_risk_taxonomy.md` for conceptual foundation
-- See `case_studies/nifty50_esg_integration_walkthrough.ipynb` for end-to-end workflow
-- Use `frameworks/transition_finance_template.xlsx` for structuring deals
+## 🗃️ Data Sources
+
+| Dataset | Source | Coverage |
+|---------|--------|----------|
+| Green bond issuance | SEBI, BSE, NSE | 2015–present |
+| ESG scores | MSCI, Bloomberg, company BRSR filings | Nifty 50 + selected mid-cap |
+| Climate scenarios | IEA, NITI Aayog, World Bank | India-specific pathways |
+| Policy documents | SEBI, RBI, MoEFCC | Latest circulars |
+| Emissions data | CRISIL, company disclosures | Hard-to-abate sectors |
 
 ---
 
-## Key Findings & Insights
+## ⚠️ Limitations
 
-### Green Bonds
-- Indian green bond issuance reached ₹X,000 Cr in [year]; dominated by PSU issuers & renewable energy projects
-- Green bonds trade X-Y bps tighter than vanilla bonds (duration-adjusted), signaling investor appetite
-- Data gaps: end-use verification & impact measurement remain weak
-
-### ESG Integration
-- Nifty 50 shows wide ESG dispersion; no significant correlation between ESG score & returns (yet)
-- Mid/small-cap ESG data coverage <40%; external ESG scores may misrepresent emerging company profiles
-- Sector ESG bifurcation: IT/pharma vs. metals/mining show 70+ percentile gap on environmental scores
-
-### Climate Risk
-- Under a 2°C transition scenario (carbon price ₹5,000/tonne by 2030), energy & materials sectors face 15–25% earnings headwinds
-- Power sector transition is policy-driven & economically viable (renewable LCOE already sub-coal); equity risk concentrated in stranded coal plants
-- Indian equity market shows no climate risk premium yet; opportunity for alpha via climate-informed positioning
-
-### Policy & Regulation
-- SEBI BRSR rollout is comprehensive but enforcement & third-party verification remain nascent
-- RBI climate risk guidance is principles-based, not rules-based; implementation timelines unclear
-- India's net-zero commitment is credible on power sector; hard-to-abate sectors (cement, steel, aviation) lack explicit decarbonization roadmaps
-
-### Transition Finance
-- Cement sector decarbonization cost: ₹8–12 per unit cement; viable within margin structure if carbon pricing >₹3,000/tonne
-- PSU power plants retiring ahead of schedule due to coal/ash handling costs; refinancing gaps exist for affected workers & communities
-- Green-linked bond market nascent in India; high documentation & KPI verification burden limits take-up
+- **ESG data quality** — relies on company self-disclosure; cross-provider inconsistency is common
+- **Scenario uncertainty** — climate pathways carry deep uncertainty; outputs are illustrative
+- **Model sensitivity** — transition finance models are highly sensitive to capex profiles and carbon price assumptions
+- **Regulatory evolution** — SEBI/RBI frameworks are actively evolving; analysis may not reflect latest circulars
+- *Not investment advice — for educational and analytical purposes only*
 
 ---
 
-## Data Sources & Attribution
+## 🔗 Related Repositories
 
-| Dataset | Source | Frequency | Coverage |
-|---------|--------|-----------|----------|
-| Green bond issuance | SEBI, BSE, NSE | Annual | 2015–present |
-| ESG scores | MSCI, Bloomberg, company BRSR | Annual | Nifty 50 + selected mid-cap |
-| Climate scenarios | IEA, NITI Aayog, World Bank | Ad-hoc | Global & India-specific |
-| Policy documents | SEBI, RBI, MoEFCC websites | Real-time | Latest circulars & guidelines |
-| Emissions data | CRISIL, company disclosures | Annual | Select hard-to-abate sectors |
+| Repository | Focus |
+|------------|-------|
+| [capital-markets-intelligence](https://github.com/DogInfantry/capital-markets-intelligence) | IPO event studies, M&A screening, sovereign risk index, yield curve decomposition |
+| [investment-risk-management-console](https://github.com/DogInfantry/investment-risk-management-console) | Real-time Nifty 50 risk dashboard, stress testing, sector attribution |
+| [critical-minerals-green-steel](https://github.com/DogInfantry/critical-minerals-green-steel) | India minerals policy, green steel industrial transition |
 
 ---
 
-## Contributing & Usage
+## 📜 License
 
-### For Researchers & Analysts
-- Use datasets & frameworks as baseline for your own analysis
-- Reference case studies for methodology precedent
-- Submit PRs with new data, corrected calculations, or expanded frameworks
-
-### For Portfolio Managers
-- Adapt ESG screening model to your universe & criteria
-- Run climate stress tests on holdings using provided templates
-- Use transition finance case studies to structure corporate financings
-
-### For Policy & Advocacy
-- Reference SEBI/RBI analysis for regulatory commentary
-- Use sector decarbonization models to inform climate policy dialogues
+MIT License — see [LICENSE](LICENSE). Attribution appreciated.
 
 ---
 
-## Limitations & Disclaimers
+<div align="center">
 
-- **Data quality:** ESG scores rely on company self-disclosure & external provider methodologies; inconsistencies across providers are common
-- **Scenario design:** Climate scenarios are illustrative; actual policy pathways, technological disruption, and climate impacts carry deep uncertainty
-- **Model assumptions:** Transition finance models assume specific capex profiles & decarbonization pathways; results are highly sensitive to these assumptions
-- **Regulatory environment:** SEBI/RBI frameworks are evolving; analysis reflects documents as of [date], subject to revision
-- **Not investment advice:** This research is for educational & analytical purposes; not a recommendation to buy/sell securities or pursue specific strategies
+**Last Updated:** April 2026 &nbsp;·&nbsp; **Status:** 🟢 Active &nbsp;·&nbsp; **Market Focus:** India
 
----
+*Original research · No API keys required · Built for practitioners*
 
-## License
-
-MIT License. Attribution appreciated.
-
----
-
-## Related Work
-
-This repository is part of a broader portfolio of research on Indian capital markets & sustainable finance:
-
-- **[Investment Risk Management Console](https://github.com/DogInfantry/investment-risk-management-console)** — Real-time Nifty 50 risk dashboard with stress testing, Greeks, and sector attribution
-- **[Equity Research Frameworks](https://github.com/DogInfantry/equity-research-india)** — GEARED framework & SOTP valuation templates for Indian equities
-- **[Critical Minerals & Green Steel Transition](https://github.com/DogInfantry/critical-minerals-green-steel)** — Strategic advisory on India's minerals policy & industrial transition
-
----
-
-## Contact & Questions
-
-For questions, data corrections, or collaboration inquiries:
-- **GitHub:** [@DogInfantry](https://github.com/DogInfantry)
-
----
-
-**Last Updated:** [Date]  
-**Branch:** `feature/commercial-layer`
+</div>
