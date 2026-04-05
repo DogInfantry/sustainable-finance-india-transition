@@ -30,10 +30,13 @@ All new code lives in new files. Existing files are read-only from the perspecti
 ```
 data/
   deal_economics.csv                  ← NEW
+  sector_capital_needs.csv            ← NEW (9 canonical subsectors + financing_need_usd_bn; does NOT replace india_transition_needs.csv)
   bank_capabilities_template.csv      ← NEW
 
-config/
+config/                               ← NEW directory (create if absent)
   priority_weights.yaml               ← NEW
+
+requirements.txt                      ← MODIFIED: add pyyaml>=6.0 (needed by load_weights())
 
 src/
   constants.py                        ← NEW (canonical strings, path constants, mappings)
@@ -151,7 +154,7 @@ CONFIG_DIR  = "config"
 
 DEAL_ECONOMICS_CSV       = f"{DATA_DIR}/deal_economics.csv"
 BANK_TEMPLATE_CSV        = f"{DATA_DIR}/bank_capabilities_template.csv"
-TRANSITION_NEEDS_CSV     = f"{DATA_DIR}/india_transition_needs.csv"
+SECTOR_CAPITAL_NEEDS_CSV = f"{DATA_DIR}/sector_capital_needs.csv"  # NEW file; india_transition_needs.csv untouched
 PRIORITY_WEIGHTS_YAML    = f"{CONFIG_DIR}/priority_weights.yaml"
 DEFAULT_BANK_PROFILE_CSV = BANK_TEMPLATE_CSV   # overridable at build time
 
@@ -234,6 +237,34 @@ def build_deal_economics_summary(
 
 ### 4.2 Sector Prioritisation Model
 
+**New data file: `data/sector_capital_needs.csv`**
+
+The existing `data/india_transition_needs.csv` uses different subsector names (e.g. "Utility-scale renewables") and has no `financing_need_usd_bn` column. This new file provides the canonical capital need estimates aligned to `constants.SUBSECTORS`. It does **not** replace the existing file.
+
+Required schema (one row per `SUBSECTORS` entry):
+
+| Column | Type | Description |
+|---|---|---|
+| `subsector` | string | Must match `constants.SUBSECTORS` exactly |
+| `financing_need_usd_bn` | float | Illustrative total capital required estimate (USD bn, annual) |
+| `notes` | string | Assumption flag |
+
+Representative values (illustrative, labelled as such):
+
+| subsector | financing_need_usd_bn |
+|---|---|
+| Solar Utility-Scale | 18.0 |
+| Wind Onshore | 10.0 |
+| Wind Offshore | 3.0 |
+| Battery Storage | 6.0 |
+| EV Charging Infrastructure | 4.0 |
+| Green Buildings | 5.0 |
+| Industrial Decarbonisation | 8.0 |
+| Circular Economy | 2.0 |
+| Transmission & Grid | 12.0 |
+
+---
+
 **Config file: `config/priority_weights.yaml`**
 
 ```yaml
@@ -282,28 +313,31 @@ FEE_THRESHOLDS = [(50, 5), (20, 4), (10, 3), (5, 2), (0, 1)]
 **Module: `src/sector_priority.py`**
 
 ```python
-def load_transition_needs(path: str = TRANSITION_NEEDS_CSV) -> pd.DataFrame:
-    """Load india_transition_needs.csv (pre-existing file in the repo).
+def load_sector_capital_needs(path: str = SECTOR_CAPITAL_NEEDS_CSV) -> pd.DataFrame:
+    """Load sector_capital_needs.csv (NEW file; does NOT use india_transition_needs.csv).
+    Named differently from scenarios.load_transition_needs() to prevent silent misuse —
+    the two functions have different contracts and different source files.
     Required schema (raises ValueError if columns are missing or subsectors unknown):
       - subsector: string — must match constants.SUBSECTORS exactly
       - financing_need_usd_bn: float — total capital required estimate
-    If the pre-existing file uses different column names, a rename mapping must be
-    applied in this function before returning (document in code comments if so).
     Calls validate_subsectors(df, 'subsector')."""
 
 def load_weights(config_path: str = PRIORITY_WEIGHTS_YAML) -> dict:
-    """Load YAML weights. Validates abs(sum(values) - 1.0) <= 0.001 (raises ValueError if not).
-    If file not found, issues warnings.warn(f'Config {config_path} not found; using default weights.')
-    and returns {total_capital_required:0.30, deal_frequency:0.25, bankability:0.25, fee_generation:0.20}."""
+    """Load YAML weights using PyYAML (pyyaml>=6.0 required in requirements.txt).
+    Uses Path(config_path).exists() — not a bare open() — so a missing config/ directory
+    is handled identically to a missing file (both return False and trigger the warning path).
+    If path does not exist: issues warnings.warn(f'Config {config_path} not found; using default weights.')
+    and returns {total_capital_required:0.30, deal_frequency:0.25, bankability:0.25, fee_generation:0.20}.
+    If path exists: loads YAML, validates abs(sum(values) - 1.0) <= 0.001 (raises ValueError if not)."""
 
 def score_subsectors(
-    transition_df: pd.DataFrame,   # from load_transition_needs(); cols: subsector, financing_need_usd_bn
+    sector_needs_df: pd.DataFrame, # from load_sector_capital_needs(); cols: subsector, financing_need_usd_bn
     raw_deal_df: pd.DataFrame,     # from load_deal_economics(); cols include subsector, deal_count_annual_estimate
     summary_deal_df: pd.DataFrame, # from build_deal_economics_summary()[1]; cols include subsector, fee_pool_usd_mn
     weights: dict,
 ) -> pd.DataFrame:
     """Score each subsector 1–5 on all four dimensions; apply weights.
-    - total_capital_required: derived from transition_df.financing_need_usd_bn
+    - total_capital_required: derived from sector_needs_df.financing_need_usd_bn  (parameter renamed from transition_df)
     - deal_frequency:         derived from raw_deal_df.deal_count_annual_estimate directly (one row per subsector; no aggregation needed)
     - bankability:            from BANKABILITY_SCORES lookup
     - fee_generation:         derived from summary_deal_df.fee_pool_usd_mn
@@ -319,7 +353,7 @@ def build_sector_priority_ranking(
     output_path: str = f"{REPORTS_DIR}/sector_priority_ranking.csv",
 ) -> pd.DataFrame:
     """Internal orchestration (all steps explicit):
-      1. transition_df        = load_transition_needs()
+      1. transition_df        = load_sector_capital_needs()
       2. raw_deal_df          = load_deal_economics()
       3. _, summary_deal_df   = build_deal_economics_summary()  # derives fee_pool_usd_mn via compute_fee_pool()
       4. weights              = load_weights()
