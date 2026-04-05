@@ -1,8 +1,6 @@
 # 🌿 Sustainable Finance & India's Green Transition
 ### An Open Research Repository | Data · Analysis · Policy Frameworks
 
-[![Author](https://img.shields.io/badge/Author-Anklesh%20Rawat-blue?style=flat-square)](https://linkedin.com/in/anklesh-rawat-00508a1aa/)
-[![Substack](https://img.shields.io/badge/Analysis-Substack-orange?style=flat-square)](https://substack.com/@ankleshrawat)
 [![GitHub](https://img.shields.io/badge/Portfolio-DogInfantry-black?style=flat-square&logo=github)](https://github.com/DogInfantry)
 [![Topics](https://img.shields.io/badge/Topics-ESG%20·%20Climate%20Finance%20·%20India-green?style=flat-square)]()
 
