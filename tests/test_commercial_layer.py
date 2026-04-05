@@ -1,5 +1,4 @@
 """Tests for the commercial decision-making layer."""
-import io
 import warnings
 
 import pandas as pd
