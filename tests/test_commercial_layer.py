@@ -117,3 +117,67 @@ def test_deal_economics_channel_pcts_sum_to_100():
     with pytest.raises(ValueError, match="100"):
         from src.deal_economics import _validate_deal_df
         _validate_deal_df(df)
+
+
+from src.sector_priority import load_weights, score_subsectors, get_top_n, build_sector_priority_ranking
+
+
+def _make_sector_needs_df():
+    return pd.DataFrame({
+        "subsector": SUBSECTORS,
+        "financing_need_usd_bn": [18, 10, 3, 6, 4, 5, 8, 2, 12],
+        "notes": ["test"] * 9,
+    })
+
+
+def test_sector_priority_weights_valid_passes(tmp_path):
+    yaml_path = tmp_path / "weights.yaml"
+    yaml_path.write_text("weights:\n  total_capital_required: 0.30\n  deal_frequency: 0.25\n  bankability: 0.25\n  fee_generation: 0.20\n")
+    w = load_weights(str(yaml_path))
+    assert abs(sum(w.values()) - 1.0) < 0.001
+
+
+def test_sector_priority_weights_invalid_raises(tmp_path):
+    yaml_path = tmp_path / "weights.yaml"
+    yaml_path.write_text("weights:\n  total_capital_required: 0.50\n  deal_frequency: 0.50\n  bankability: 0.50\n  fee_generation: 0.50\n")
+    with pytest.raises(ValueError, match="sum"):
+        load_weights(str(yaml_path))
+
+
+def test_sector_priority_weights_missing_file_warns(tmp_path):
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        result = load_weights(str(tmp_path / "nonexistent.yaml"))
+    assert any("not found" in str(x.message).lower() for x in w)
+    assert abs(sum(result.values()) - 1.0) < 0.001
+
+
+def test_sector_priority_top5_returns_five():
+    df = pd.DataFrame({"weighted_score": range(9), "score_capital": range(9), "subsector": SUBSECTORS})
+    result = get_top_n(df, 5)
+    assert len(result) == 5
+
+
+def test_sector_priority_fewer_than_n_ok():
+    df = pd.DataFrame({"weighted_score": [1, 2, 3], "score_capital": [1, 2, 3], "subsector": SUBSECTORS[:3]})
+    result = get_top_n(df, 5)
+    assert len(result) == 3
+
+
+def test_score_subsectors_output_columns():
+    # Uses in-memory fixtures only — no disk reads, no writes to reports/
+    from src.deal_economics import compute_fee_pool
+    needs = _make_sector_needs_df()
+    deal_df = pd.DataFrame({
+        "subsector": SUBSECTORS,
+        "deal_size_usd_mn": [150.0] * 9,
+        "deal_count_annual_estimate": [10] * 9,
+        "arranger_fee_bps": [100.0] * 9,
+        "commitment_fee_bps": [50.0] * 9,
+    })
+    summary = compute_fee_pool(deal_df)  # produces fee_pool_usd_mn without hitting disk
+    weights = {"total_capital_required": 0.30, "deal_frequency": 0.25, "bankability": 0.25, "fee_generation": 0.20}
+    scored = score_subsectors(needs, deal_df, summary, weights)
+    for col in ["subsector", "score_capital", "score_frequency", "score_bankability", "score_fee", "weighted_score", "rank", "top5_flag"]:
+        assert col in scored.columns
+    assert scored["top5_flag"].sum() == 5
