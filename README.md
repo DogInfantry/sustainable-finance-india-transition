@@ -3,8 +3,14 @@
 India-focused research on green bonds, ESG integration, climate risk, and transition finance.
 
 [![Status](https://img.shields.io/badge/status-active-brightgreen)]()
-[![Focus](https://img.shields.io/badge/focus-sustainable%20finance-blue)]()
-[![Region](https://img.shields.io/badge/region-India-orange)]()
+[![Domain](https://img.shields.io/badge/domain-sustainable%20finance-blue)]()
+[![Markets](https://img.shields.io/badge/markets-capital%20markets-purple)]()
+[![Focus](https://img.shields.io/badge/focus-green%20bonds-success)]()
+[![Focus](https://img.shields.io/badge/focus-esg%20integration-blueviolet)]()
+[![Focus](https://img.shields.io/badge/focus-climate%20risk-orange)]()
+[![Focus](https://img.shields.io/badge/focus-transition%20finance-red)]()
+[![Instruments](https://img.shields.io/badge/instruments-SLBs%20%7C%20SLLs%20%7C%20project%20finance-yellow)]()
+[![Use Case](https://img.shields.io/badge/use--case-investment%20research-black)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)]()
 
 **Research on India's sustainable finance ecosystem, green bond markets, ESG integration frameworks, regulatory policy evolution, and transition finance mechanics for hard-to-abate sectors.**
