@@ -1,5 +1,12 @@
 # Sustainable Finance India Transition
 
+India-focused research on green bonds, ESG integration, climate risk, and transition finance.
+
+[![Status](https://img.shields.io/badge/status-active-brightgreen)]()
+[![Focus](https://img.shields.io/badge/focus-sustainable%20finance-blue)]()
+[![Region](https://img.shields.io/badge/region-India-orange)]()
+[![License](https://img.shields.io/badge/license-MIT-lightgrey)]()
+
 **Research on India's sustainable finance ecosystem, green bond markets, ESG integration frameworks, regulatory policy evolution, and transition finance mechanics for hard-to-abate sectors.**
 
 ---
