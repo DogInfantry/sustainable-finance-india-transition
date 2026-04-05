@@ -1,0 +1,8 @@
+# config/priority_weights.yaml
+# Scoring weights for sector prioritisation.
+# Values must sum to 1.0. Edit to reflect your institution's priorities.
+weights:
+  total_capital_required: 0.30   # Scale of deployment opportunity
+  deal_frequency:         0.25   # Pipeline volume / deal activity
+  bankability:            0.25   # Creditworthiness, collateral, offtake clarity
+  fee_generation:         0.20   # Arranger + ongoing fee pool potential

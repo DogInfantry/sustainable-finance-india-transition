@@ -1,0 +1,10 @@
+subsector,deal_archetype,deal_size_usd_mn,debt_pct,bond_pct,equity_pct,grant_pct,arranger_fee_bps,commitment_fee_bps,irr_expectation_pct,deal_count_annual_estimate,notes
+Solar Utility-Scale,Project Finance — Senior Secured,150.0,75.0,20.0,25.0,0.0,120,50,12.0,40,Illustrative — based on observed India solar PF transactions
+Wind Onshore,Project Finance — Senior Secured,120.0,70.0,15.0,30.0,0.0,110,45,13.0,25,Illustrative — based on India wind PF market
+Wind Offshore,Project Finance — Blended,300.0,60.0,10.0,25.0,15.0,175,65,15.0,3,Illustrative — nascent India offshore wind market
+Battery Storage,Project Finance — PCG Enhanced,80.0,65.0,10.0,25.0,10.0,140,55,14.0,15,Illustrative — BESS project finance with DFI support
+EV Charging Infrastructure,Corporate/Portfolio Finance,30.0,55.0,5.0,35.0,10.0,100,40,16.0,20,Illustrative — EV infrastructure portfolio deals
+Green Buildings,Developer Finance,40.0,60.0,10.0,30.0,10.0,90,35,14.0,18,Illustrative — green certified commercial RE
+Industrial Decarbonisation,SLL — Corporate,200.0,70.0,20.0,30.0,0.0,95,40,13.0,12,Illustrative — large corporate SLL for decarbonisation capex
+Circular Economy,Blended Finance,25.0,50.0,5.0,30.0,20.0,130,50,15.0,8,Illustrative — circular economy blended transactions
+Transmission & Grid,Project Finance — Regulated,400.0,80.0,25.0,20.0,0.0,100,40,11.0,10,Illustrative — regulated transmission asset finance
