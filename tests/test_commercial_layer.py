@@ -181,3 +181,31 @@ def test_score_subsectors_output_columns():
     for col in ["subsector", "score_capital", "score_frequency", "score_bankability", "score_fee", "weighted_score", "rank", "top5_flag"]:
         assert col in scored.columns
     assert scored["top5_flag"].sum() == 5
+
+
+from src.lifecycle import build_lifecycle_matrix, export_lifecycle_matrix
+
+
+def test_lifecycle_matrix_covers_all_subsectors():
+    df = build_lifecycle_matrix()
+    assert set(df["subsector"].unique()) == set(SUBSECTORS)
+    assert set(df["stage"].unique()) == set(LIFECYCLE_STAGES)
+    # Every subsector must have all 4 stages
+    for sub in SUBSECTORS:
+        stages = df[df["subsector"] == sub]["stage"].tolist()
+        assert set(stages) == set(LIFECYCLE_STAGES), f"Missing stages for {sub}"
+
+
+def test_lifecycle_matrix_products_in_category_map():
+    df = build_lifecycle_matrix()
+    for col in ("primary_product", "secondary_product"):
+        unknown = set(df[col]) - set(PRODUCT_CATEGORY_MAP.keys())
+        assert not unknown, f"Products not in PRODUCT_CATEGORY_MAP ({col}): {unknown}"
+
+
+def test_export_lifecycle_matrix_writes_file(tmp_path):
+    out = str(tmp_path / "matrix.csv")
+    df = export_lifecycle_matrix(output_path=out)
+    import os
+    assert os.path.exists(out)
+    assert len(df) == len(SUBSECTORS) * len(LIFECYCLE_STAGES)
