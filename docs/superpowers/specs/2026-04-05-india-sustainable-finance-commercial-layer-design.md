@@ -279,7 +279,7 @@ weights:
 
 **Scoring thresholds (named constants at top of `sector_priority.py`):**
 
-`total_capital_required` — from `india_transition_needs.csv` column `financing_need_usd_bn`:
+`total_capital_required` — from `sector_capital_needs.csv` column `financing_need_usd_bn` (via `load_sector_capital_needs()`):
 ```python
 CAPITAL_THRESHOLDS = [(50, 5), (20, 4), (10, 3), (5, 2), (0, 1)]
 # (min_value_inclusive, score) — first matching threshold wins
