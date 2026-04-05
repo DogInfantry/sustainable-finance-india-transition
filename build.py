@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import argparse
+
+from src.constants import DEFAULT_BANK_PROFILE_CSV
+
 from pathlib import Path
 
 from src.bank_views import (
@@ -161,5 +165,57 @@ def main() -> None:
     print("Rebuilt reports, figures, and appendix tables.")
 
 
+def build_commercial_layer(bank_profile_path: str = DEFAULT_BANK_PROFILE_CSV) -> None:
+    """Commercial decision-making layer — runs after core research outputs."""
+    import os
+    os.makedirs("reports", exist_ok=True)
+    os.makedirs("figures", exist_ok=True)
+
+    from src.deal_economics import build_deal_economics_summary, compute_annual_financing_volume
+    from src.sector_priority import build_sector_priority_ranking, get_top_n
+    from src.lifecycle import export_lifecycle_matrix
+    from src.bank_strategy import build_bank_strategy_output, load_bank_profile, map_capabilities_to_sectors
+    from src.figures import (
+        plot_capital_allocation_by_sector,
+        plot_product_dominance_by_sector,
+        plot_lifecycle_heatmap,
+        plot_bank_opportunity_heatmap,
+    )
+    from src.commercial_report import build_commercial_report
+
+    print("Building commercial layer...")
+    raw_df, summary_df = build_deal_economics_summary()
+    vol_df    = compute_annual_financing_volume(raw_df)
+    priority  = build_sector_priority_ranking()
+    lifecycle = export_lifecycle_matrix()
+
+    plays, mix, targeting = build_bank_strategy_output(
+        bank_profile_path=bank_profile_path,
+        priority_df=priority,
+        lifecycle_df=lifecycle,
+    )
+
+    plot_capital_allocation_by_sector(vol_df, raw_df)
+    plot_product_dominance_by_sector(lifecycle, raw_df)
+    plot_lifecycle_heatmap(lifecycle)
+
+    top5 = get_top_n(priority, 5)
+    capabilities = load_bank_profile(bank_profile_path)
+    mapped = map_capabilities_to_sectors(capabilities, top5, lifecycle)
+    plot_bank_opportunity_heatmap(mapped)
+
+    build_commercial_report(priority, raw_df, summary_df, lifecycle, plays, mix, targeting)
+    print("Commercial layer complete.")
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Rebuild all outputs including commercial layer.")
+    parser.add_argument(
+        "--bank-profile",
+        default=DEFAULT_BANK_PROFILE_CSV,
+        dest="bank_profile",
+        help="Path to bank capabilities CSV (default: data/bank_capabilities_template.csv)",
+    )
+    args = parser.parse_args()
     main()
+    build_commercial_layer(bank_profile_path=args.bank_profile)
