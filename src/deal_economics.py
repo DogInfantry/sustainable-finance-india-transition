@@ -43,10 +43,16 @@ def compute_annual_financing_volume(df: pd.DataFrame) -> pd.DataFrame:
 
 def compute_fee_pool(df: pd.DataFrame) -> pd.DataFrame:
     """Returns DataFrame[subsector, annual_volume_usd_mn, weighted_fee_bps, fee_pool_usd_mn]."""
-    result = compute_annual_financing_volume(df).copy()
-    result["weighted_fee_bps"] = (df["arranger_fee_bps"].values + df["commitment_fee_bps"].values) / 2
+    vol = compute_annual_financing_volume(df)
+    fee_cols = df[["subsector", "arranger_fee_bps", "commitment_fee_bps"]].copy()
+    result = vol.merge(fee_cols, on="subsector")
+    result["weighted_fee_bps"] = (result["arranger_fee_bps"] + result["commitment_fee_bps"]) / 2
     result["fee_pool_usd_mn"] = result["annual_volume_usd_mn"] * result["weighted_fee_bps"] / 10_000
-    return result.sort_values("fee_pool_usd_mn", ascending=False).reset_index(drop=True)
+    return (
+        result[["subsector", "annual_volume_usd_mn", "weighted_fee_bps", "fee_pool_usd_mn"]]
+        .sort_values("fee_pool_usd_mn", ascending=False)
+        .reset_index(drop=True)
+    )
 
 
 def build_deal_economics_summary(
