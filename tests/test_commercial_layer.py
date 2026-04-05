@@ -209,3 +209,97 @@ def test_export_lifecycle_matrix_writes_file(tmp_path):
     import os
     assert os.path.exists(out)
     assert len(df) == len(SUBSECTORS) * len(LIFECYCLE_STAGES)
+
+
+from src.bank_strategy import (
+    load_bank_profile,
+    map_capabilities_to_sectors,
+    get_top_strategic_plays,
+    get_product_mix_recommendation,
+    get_client_targeting_strategy,
+    build_bank_strategy_output,
+)
+from src.lifecycle import build_lifecycle_matrix, export_lifecycle_matrix
+from src.sector_priority import build_sector_priority_ranking, get_top_n
+
+
+def _make_capabilities_df():
+    return pd.DataFrame({
+        "capability": ["Green Project Finance", "SLL", "Green Bond"],
+        "strength": [4, 3, 2],
+        "client_segment": ["Infrastructure", "Corporate", "Corporate"],
+        "india_presence": ["Yes", "Yes", "Yes"],
+        "notes": ["", "", ""],
+    })
+
+
+def test_bank_strategy_plays_columns():
+    lifecycle = build_lifecycle_matrix()
+    priority = build_sector_priority_ranking()
+    top5 = get_top_n(priority, 5)
+    caps = _make_capabilities_df()
+    mapped = map_capabilities_to_sectors(caps, top5, lifecycle)
+    plays = get_top_strategic_plays(mapped)
+    for col in ["rank", "subsector", "stage", "recommended_action", "fit_score_normalised"]:
+        assert col in plays.columns
+
+
+def test_bank_strategy_zero_fit_equal_allocation():
+    lifecycle = build_lifecycle_matrix()
+    caps = pd.DataFrame({
+        "capability": ["Unknown Product"],
+        "strength": [5],
+        "client_segment": ["Corporate"],
+        "india_presence": ["Yes"],
+        "notes": [""],
+    })
+    priority = build_sector_priority_ranking()
+    top5 = get_top_n(priority, 5)
+    mapped = map_capabilities_to_sectors(caps, top5, lifecycle)
+    mix = get_product_mix_recommendation(mapped)
+    for pct in mix["recommended_allocation_pct"]:
+        assert abs(pct - 25.0) < 0.01
+
+
+def test_bank_strategy_tiebreak_uses_lifecycle_order():
+    # Two subsectors, all stages tied at fit_score_normalised=2.0
+    # Tiebreak must resolve to "Development" (first in LIFECYCLE_STAGES) for both
+    rows = []
+    for sub in ["Solar Utility-Scale", "Wind Onshore"]:
+        for stage in LIFECYCLE_STAGES:
+            rows.append({
+                "subsector": sub, "stage": stage,
+                "primary_product": "Green Bond", "secondary_product": "SLL Refinancing",
+                "primary_strength": 3, "secondary_strength": 0,
+                "fit_score": 3.0, "fit_score_normalised": 2.0,
+            })
+    mapped = pd.DataFrame(rows)
+    caps = _make_capabilities_df()
+    result = get_client_targeting_strategy(mapped, caps)
+    for sub in ["Solar Utility-Scale", "Wind Onshore"]:
+        row = result[result["subsector"] == sub]
+        assert row.iloc[0]["entry_stage"] == "Development", (
+            f"Expected Development for {sub} (first in LIFECYCLE_STAGES), "
+            f"got {row.iloc[0]['entry_stage']}"
+        )
+
+
+def test_bank_strategy_three_csvs_written(tmp_path):
+    plays_path   = str(tmp_path / "plays.csv")
+    mix_path     = str(tmp_path / "mix.csv")
+    target_path  = str(tmp_path / "targeting.csv")
+    build_bank_strategy_output(
+        plays_path=plays_path, mix_path=mix_path, targeting_path=target_path
+    )
+    import os
+    for p in [plays_path, mix_path, target_path]:
+        assert os.path.exists(p) and os.path.getsize(p) > 0
+
+
+def test_bank_strategy_empty_priority_raises():
+    lifecycle = build_lifecycle_matrix()
+    empty = pd.DataFrame(columns=["subsector", "weighted_score", "score_capital",
+                                   "score_frequency", "score_bankability", "score_fee",
+                                   "rank", "top5_flag"])
+    with pytest.raises(ValueError, match="No subsectors"):
+        build_bank_strategy_output(priority_df=empty, lifecycle_df=lifecycle)
