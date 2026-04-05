@@ -352,3 +352,37 @@ def test_plot_bank_opportunity_heatmap_creates_file(tmp_path):
     out = str(tmp_path / "bank.png")
     plot_bank_opportunity_heatmap(mapped, output_path=out)
     assert os.path.exists(out) and os.path.getsize(out) > 0
+
+
+from src.commercial_report import build_commercial_report
+
+
+def test_commercial_report_generates_file(tmp_path):
+    from src.deal_economics import build_deal_economics_summary
+    from src.sector_priority import build_sector_priority_ranking
+    from src.lifecycle import export_lifecycle_matrix
+    from src.bank_strategy import build_bank_strategy_output
+
+    raw_df, summary_df = build_deal_economics_summary(str(tmp_path / "summary.csv"))
+    priority = build_sector_priority_ranking(str(tmp_path / "priority.csv"))
+    lifecycle = export_lifecycle_matrix(str(tmp_path / "lifecycle.csv"))
+    plays, mix, targeting = build_bank_strategy_output(
+        plays_path=str(tmp_path / "plays.csv"),
+        mix_path=str(tmp_path / "mix.csv"),
+        targeting_path=str(tmp_path / "targeting.csv"),
+    )
+    out = str(tmp_path / "report.md")
+    build_commercial_report(priority, raw_df, summary_df, lifecycle, plays, mix, targeting, output_path=out)
+
+    assert os.path.exists(out)
+    content = open(out).read()
+    assert len(content) > 500
+    assert "Where the Money Is" in content
+    # All four figure references must appear with correct relative paths
+    for fig in [
+        "../figures/capital_allocation_by_sector.png",
+        "../figures/product_dominance_by_sector.png",
+        "../figures/lifecycle_financing_flow.png",
+        "../figures/bank_opportunity_heatmap.png",
+    ]:
+        assert fig in content, f"Missing figure reference: {fig}"
