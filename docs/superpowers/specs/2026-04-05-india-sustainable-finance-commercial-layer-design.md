@@ -90,25 +90,49 @@ LIFECYCLE_STAGES = ["Development", "Construction", "Operation", "Refinancing"]
 # ── Product categories for heatmap colouring ──────────────────────────────
 PRODUCT_CATEGORIES = ["Loan", "Bond", "Blended Finance", "Equity/Mezzanine"]
 
-# ── Mapping from granular product names → PRODUCT_CATEGORIES ──────────────
-# Used by plot_product_dominance_by_sector() and plot_lifecycle_heatmap().
 # ── Default fallback for client segment ───────────────────────────────────
 # Used by get_client_targeting_strategy() when no capability match is found.
 DEFAULT_CLIENT_SEGMENT = "Infrastructure"
 
+# ── Capital channel display names and CSV column mapping ──────────────────
+# Used by plot_capital_allocation_by_sector().
+# deal_economics.csv carries four channel columns; chart stacks them in this order.
+CAPITAL_CHANNELS = ["Bank Debt", "Bonds", "Blended/DFI", "Equity"]
+CAPITAL_CHANNEL_COLS = {
+    "Bank Debt":   "bank_debt_pct",   # = debt_pct - bond_pct
+    "Bonds":       "bond_pct",
+    "Blended/DFI": "grant_pct",
+    "Equity":      "equity_pct",
+}
+
+# ── Stage weights for product dominance volume attribution ─────────────────
+# Used by plot_product_dominance_by_sector().
+# Each subsector's annual_volume is distributed across stages by these weights,
+# then attributed to the primary_product's PRODUCT_CATEGORY at each stage.
+STAGE_VOLUME_WEIGHTS = {
+    "Development":  0.10,
+    "Construction": 0.50,
+    "Operation":    0.30,
+    "Refinancing":  0.10,
+}
+
 # ── Mapping from granular product names → PRODUCT_CATEGORIES ──────────────
+# Used by plot_product_dominance_by_sector() and plot_lifecycle_heatmap().
+# Note: SLL (Sustainability-Linked Loan) is classified as "Loan" — it is a
+# loan instrument despite its sustainability-linked label. The figure legend
+# and generated report include a footnote clarifying this.
 PRODUCT_CATEGORY_MAP = {
     "Development Loan":           "Loan",
     "Working Capital Facility":   "Loan",
     "Green Project Finance":      "Loan",
     "SLL Refinancing":            "Loan",
+    "SLL":                        "Loan",   # Sustainability-Linked Loan — loan instrument
     "Term Loan":                  "Loan",
     "Revolving Credit Facility":  "Loan",
     "Green Bond":                 "Bond",
     "Green Bond Tap":             "Bond",
     "Sustainability Bond":        "Bond",
     "Transition Bond":            "Bond",
-    "SLL":                        "Bond",   # SLL placed in Bond for display purposes
     "Equity Bridge":              "Equity/Mezzanine",
     "Mezzanine Loan":             "Equity/Mezzanine",
     "Sponsor Equity":             "Equity/Mezzanine",
@@ -152,31 +176,36 @@ def validate_subsectors(df: pd.DataFrame, col: str) -> None:
 
 **Data file: `data/deal_economics.csv`**
 
-One row per representative deal archetype. `subsector` values must match `SUBSECTORS` exactly.
+**Exactly one row per subsector** — one representative archetype per subsector. `load_deal_economics()` validates this (raises if any subsector appears more than once). `subsector` values must match `SUBSECTORS` exactly.
 
 Columns:
 | Column | Type | Description |
 |---|---|---|
-| `subsector` | string | Must match `constants.SUBSECTORS` |
+| `subsector` | string | Must match `constants.SUBSECTORS`; unique per row |
 | `deal_archetype` | string | e.g. Project Finance — Senior Secured |
 | `deal_size_usd_mn` | float | Typical deal size (range midpoint) |
-| `debt_pct` | float | % of deal financed by debt (0–100) |
-| `equity_pct` | float | % financed by equity (0–100) |
-| `grant_pct` | float | % from grants/concessional (0–100) |
+| `debt_pct` | float | Total debt % (bank debt + bond), 0–100 |
+| `bond_pct` | float | Bond financing sub-component of debt_pct, 0–100. bank_debt_pct = debt_pct − bond_pct |
+| `equity_pct` | float | % financed by sponsor equity (0–100) |
+| `grant_pct` | float | % from grants/concessional/DFI (0–100) |
 | `arranger_fee_bps` | float | Arranger/structuring fee in basis points |
 | `commitment_fee_bps` | float | Undrawn commitment fee in basis points |
 | `irr_expectation_pct` | float | Sponsor equity IRR expectation (%) |
 | `deal_count_annual_estimate` | int | Estimated annual deal count in India |
 | `notes` | string | Source / assumption flag |
 
-All values are illustrative estimates; `notes` carries the assumption flag.
+Constraint: `debt_pct + equity_pct + grant_pct` must equal 100 per row (validated on load, raises if violated). All values are illustrative estimates; `notes` carries the assumption flag.
 
 **Module: `src/deal_economics.py`**
 
 ```python
 def load_deal_economics(path: str = DEAL_ECONOMICS_CSV) -> pd.DataFrame:
     """Load and validate deal_economics.csv.
-    Calls validate_subsectors(df, 'subsector'). Raises on unknown subsectors."""
+    Validations (all raise ValueError on failure):
+    - validate_subsectors(df, 'subsector') — no unknown or NaN subsector values
+    - Exactly one row per subsector (duplicates not permitted)
+    - debt_pct + equity_pct + grant_pct == 100 per row (tolerance ±0.1)
+    - bond_pct <= debt_pct per row"""
 
 def compute_annual_financing_volume(df: pd.DataFrame) -> pd.DataFrame:
     """Input: raw deal_economics DataFrame.
@@ -254,14 +283,18 @@ FEE_THRESHOLDS = [(50, 5), (20, 4), (10, 3), (5, 2), (0, 1)]
 
 ```python
 def load_transition_needs(path: str = TRANSITION_NEEDS_CSV) -> pd.DataFrame:
-    """Load india_transition_needs.csv.
-    Must contain columns: subsector, financing_need_usd_bn.
+    """Load india_transition_needs.csv (pre-existing file in the repo).
+    Required schema (raises ValueError if columns are missing or subsectors unknown):
+      - subsector: string — must match constants.SUBSECTORS exactly
+      - financing_need_usd_bn: float — total capital required estimate
+    If the pre-existing file uses different column names, a rename mapping must be
+    applied in this function before returning (document in code comments if so).
     Calls validate_subsectors(df, 'subsector')."""
 
 def load_weights(config_path: str = PRIORITY_WEIGHTS_YAML) -> dict:
-    """Load YAML weights. Validates abs(sum(values) - 1.0) <= 0.001.
-    Falls back to {total_capital_required:0.30, deal_frequency:0.25,
-    bankability:0.25, fee_generation:0.20} if file not found."""
+    """Load YAML weights. Validates abs(sum(values) - 1.0) <= 0.001 (raises ValueError if not).
+    If file not found, issues warnings.warn(f'Config {config_path} not found; using default weights.')
+    and returns {total_capital_required:0.30, deal_frequency:0.25, bankability:0.25, fee_generation:0.20}."""
 
 def score_subsectors(
     transition_df: pd.DataFrame,   # from load_transition_needs(); cols: subsector, financing_need_usd_bn
@@ -271,7 +304,7 @@ def score_subsectors(
 ) -> pd.DataFrame:
     """Score each subsector 1–5 on all four dimensions; apply weights.
     - total_capital_required: derived from transition_df.financing_need_usd_bn
-    - deal_frequency:         derived from raw_deal_df.deal_count_annual_estimate (summed by subsector)
+    - deal_frequency:         derived from raw_deal_df.deal_count_annual_estimate directly (one row per subsector; no aggregation needed)
     - bankability:            from BANKABILITY_SCORES lookup
     - fee_generation:         derived from summary_deal_df.fee_pool_usd_mn
     Returns DataFrame[subsector, score_capital, score_frequency,
@@ -389,13 +422,18 @@ All new figure functions appended to `src/figures.py`. Existing functions not mo
 ```python
 def plot_capital_allocation_by_sector(
     volume_df: pd.DataFrame,       # from compute_annual_financing_volume(); cols: subsector, annual_volume_usd_mn
-    raw_deal_df: pd.DataFrame,     # from load_deal_economics(); cols include debt_pct, equity_pct, grant_pct
+    raw_deal_df: pd.DataFrame,     # from load_deal_economics(); cols include debt_pct, bond_pct, equity_pct, grant_pct
     output_path: str = f"{FIGURES_DIR}/capital_allocation_by_sector.png",
 ) -> None:
     """Horizontal stacked bar: annual financing volume by subsector,
-    stacked by capital channel (Bank Debt, Bonds, Blended/DFI, Equity).
-    Channel split derived from weighted-average debt_pct/equity_pct/grant_pct
-    per subsector from raw_deal_df."""
+    stacked by four capital channels defined in constants.CAPITAL_CHANNELS.
+    Channel split computation per subsector:
+      bank_debt_vol = annual_volume × (debt_pct - bond_pct) / 100
+      bond_vol      = annual_volume × bond_pct / 100
+      blended_vol   = annual_volume × grant_pct / 100
+      equity_vol    = annual_volume × equity_pct / 100
+    Join: volume_df joined to raw_deal_df on 'subsector' (inner join; one row each).
+    Stacking order: Bank Debt, Bonds, Blended/DFI, Equity (left to right)."""
 
 def plot_product_dominance_by_sector(
     lifecycle_df: pd.DataFrame,    # from export_lifecycle_matrix(); cols: subsector, stage, primary_product
@@ -403,11 +441,15 @@ def plot_product_dominance_by_sector(
     output_path: str = f"{FIGURES_DIR}/product_dominance_by_sector.png",
 ) -> None:
     """Heatmap: subsectors (Y) × PRODUCT_CATEGORIES (X).
-    Join key: subsector (inner join between lifecycle_df and raw_deal_df).
-    Volume per subsector = deal_size_usd_mn × deal_count_annual_estimate, summed across all
-    deal archetypes for that subsector. This volume is then attributed to the PRODUCT_CATEGORY
-    of the primary_product at the 'Construction' stage (the dominant volume stage) per subsector.
-    Cell intensity = attributed annual_volume_usd_mn. Zero-volume cells rendered as white."""
+    Algorithm:
+      1. Compute annual_volume per subsector from raw_deal_df (one row each; no aggregation needed).
+      2. Join lifecycle_df to volume on 'subsector' (inner join).
+      3. For each subsector × stage cell, compute stage_volume = annual_volume × STAGE_VOLUME_WEIGHTS[stage].
+      4. Map primary_product → PRODUCT_CATEGORY via PRODUCT_CATEGORY_MAP.
+      5. Sum stage_volume by subsector × PRODUCT_CATEGORY.
+      6. Pivot to subsectors (Y) × PRODUCT_CATEGORIES (X) with sum of stage_volume as cell value.
+    Cell intensity = sum of stage_volume_usd_mn. Zero-volume cells rendered as white.
+    Legend footnote: 'SLL classified as Loan (bank lending instrument).'"""
 
 def plot_lifecycle_heatmap(
     matrix_df: pd.DataFrame,       # from export_lifecycle_matrix()
@@ -451,12 +493,12 @@ Columns:
 **Module: `src/bank_strategy.py`**
 
 `map_capabilities_to_sectors` algorithm:
-- Join key: `capability` in `capabilities_df` matched case-insensitively against `primary_product` and `secondary_product` in `lifecycle_df`
-- For each `top-5 sector × stage`:
-  - `primary_strength` = bank's `strength` for the primary product, or 0 if not found
-  - `secondary_strength` = bank's `strength` for the secondary product, or 0 if not found
+- Lookup method: for each product string (primary or secondary), case-fold both sides and find all matching rows in `capabilities_df`. If multiple rows match (same product listed twice with different segments), take `max(strength)`. If no match, use 0.
+- For each `top-N sector × stage`:
+  - `primary_strength` = max matched strength for `primary_product`, or 0
+  - `secondary_strength` = max matched strength for `secondary_product`, or 0
   - `fit_score` = `primary_strength + 0.5 × secondary_strength` (max 7.5)
-  - `fit_score_normalised` = `fit_score / 7.5 × 5` (rounded to 2dp; scale 0–5)
+  - `fit_score_normalised` = `round(fit_score / 7.5 * 5, 2)` (scale 0–5)
 - Unmatched capabilities are not penalised
 
 ```python
@@ -482,7 +524,9 @@ def get_top_strategic_plays(mapped_df: pd.DataFrame) -> pd.DataFrame:
 def get_product_mix_recommendation(mapped_df: pd.DataFrame) -> pd.DataFrame:
     """Returns DataFrame[product_category, total_fit_score, recommended_allocation_pct].
     For each PRODUCT_CATEGORY, sum fit_score_normalised across all subsector×stage cells
-    where primary_product maps to that category. Allocation_pct = share of total."""
+    where primary_product maps to that category (via PRODUCT_CATEGORY_MAP).
+    allocation_pct = total_fit_score / sum(all total_fit_scores) × 100.
+    Zero-division guard: if sum of all scores == 0, return equal allocation (25% per category)."""
 
 def get_client_targeting_strategy(
     mapped_df: pd.DataFrame,
@@ -490,9 +534,10 @@ def get_client_targeting_strategy(
 ) -> pd.DataFrame:
     """Returns DataFrame[subsector, client_segment, entry_stage, entry_point, rationale].
     entry_stage = stage with highest fit_score_normalised for each subsector.
+    Tie-breaking: first occurrence in constants.LIFECYCLE_STAGES order (Development < Construction < Operation < Refinancing).
     entry_point = primary_product at that stage.
-    client_segment = capabilities_df['client_segment'] for the matching capability,
-    falling back to constants.DEFAULT_CLIENT_SEGMENT if no match."""
+    client_segment = capabilities_df['client_segment'] for the matching capability (case-insensitive match on entry_point);
+    if multiple matches, take the row with highest strength; falling back to constants.DEFAULT_CLIENT_SEGMENT if no match."""
 
 def build_bank_strategy_output(
     bank_profile_path: str = DEFAULT_BANK_PROFILE_CSV,
@@ -553,7 +598,7 @@ Tone: precise, direct, no filler — modelled on McKinsey/Citi sector briefs. In
 6. **Bank Strategy Recommendations** — strategic plays table, product mix table, client targeting table; all generic (no bank names)
 7. **Appendix** — scoring thresholds (from `sector_priority.py` constants), weight defaults, deal count methodology, data sources
 
-All four new figures referenced inline with relative paths.
+All four new figures referenced inline using paths relative to the report file's location (`reports/`): e.g. `../figures/capital_allocation_by_sector.png`. This ensures correct rendering when the markdown file is opened directly from the filesystem.
 
 ---
 
@@ -627,17 +672,23 @@ New test file: `tests/test_commercial_layer.py`
 
 | Test | What it checks |
 |---|---|
-| `test_deal_economics_fee_pool_formula` | Given arranger_fee=100bps, commitment_fee=50bps, volume=200 USD mn: weighted_fee=75bps, fee_pool=1.5 USD mn |
-| `test_deal_economics_returns_raw_and_summary` | `build_deal_economics_summary()` returns a 2-tuple; raw_df has original columns; summary_df has fee_pool_usd_mn |
-| `test_sector_priority_weights_sum_to_one` | `load_weights()` raises on weights ≠ 1.0 |
+| `test_deal_economics_fee_pool_formula` | arranger_fee=100bps, commitment_fee=50bps, volume=200 USD mn → weighted_fee=75bps, fee_pool=1.5 USD mn |
+| `test_deal_economics_returns_raw_and_summary` | `build_deal_economics_summary()` returns 2-tuple; raw_df has `bond_pct`; summary_df has `fee_pool_usd_mn` |
+| `test_deal_economics_duplicate_subsector_raises` | `load_deal_economics()` raises ValueError if any subsector appears more than once |
+| `test_deal_economics_channel_pcts_sum_to_100` | `load_deal_economics()` raises if debt+equity+grant ≠ 100 |
+| `test_sector_priority_weights_valid_passes` | `load_weights()` returns dict without error when weights sum to 1.0 |
+| `test_sector_priority_weights_invalid_raises` | `load_weights()` raises ValueError when weights sum ≠ 1.0 |
+| `test_sector_priority_weights_missing_file_warns` | `load_weights()` issues `warnings.warn` and returns defaults when YAML not found |
 | `test_sector_priority_top5_returns_five` | `get_top_n(df, 5)` returns exactly 5 rows |
 | `test_sector_priority_fewer_than_n_ok` | `get_top_n(df, 5)` on 3-row df returns 3 rows without error |
-| `test_lifecycle_matrix_covers_all_subsectors` | All 9 SUBSECTORS × 4 stages present |
-| `test_lifecycle_matrix_products_in_category_map` | All product strings exist in PRODUCT_CATEGORY_MAP |
+| `test_lifecycle_matrix_covers_all_subsectors` | All 9 SUBSECTORS × 4 stages present; no missing cells |
+| `test_lifecycle_matrix_products_in_category_map` | All primary/secondary product strings exist in PRODUCT_CATEGORY_MAP |
 | `test_bank_strategy_three_csvs_written` | Three output CSVs exist and are non-empty after run |
 | `test_bank_strategy_plays_columns` | Plays output has rank, subsector, stage, recommended_action, fit_score_normalised |
 | `test_bank_strategy_empty_priority_raises` | `build_bank_strategy_output()` raises ValueError on empty priority_df |
-| `test_commercial_report_generates_file` | Output file exists and is non-empty (smoke test) |
+| `test_bank_strategy_zero_fit_equal_allocation` | `get_product_mix_recommendation()` returns 25% per category when all fit scores are 0 |
+| `test_bank_strategy_tiebeak_uses_lifecycle_order` | `get_client_targeting_strategy()` resolves tie by first occurrence in LIFECYCLE_STAGES |
+| `test_commercial_report_generates_file` | Output file exists, is non-empty, and contains `../figures/` relative paths |
 | `test_validate_subsectors_raises_on_unknown` | Raises ValueError on unrecognised name |
 | `test_validate_subsectors_raises_on_nan` | Raises ValueError on NaN value |
 
@@ -652,5 +703,5 @@ New test file: `tests/test_commercial_layer.py`
 - Bank strategy engine fully generic — no institution names hardcoded anywhere
 - Subsector strings centralised in `src/constants.py`; `validate_subsectors()` enforces consistency at load time
 - All product name strings must exist in `PRODUCT_CATEGORY_MAP` — validated at matrix build time
-- `build_commercial_layer()` loads raw deal data once and threads it through all downstream functions
+- `build_commercial_layer()` loads raw deal data once via `build_deal_economics_summary()` and threads it through figure functions; `build_sector_priority_ranking()` performs its own self-contained load for independent testability
 - Tone of generated report: internal strategy team, McKinsey/Citi brief style
