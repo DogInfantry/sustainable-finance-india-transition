@@ -1,0 +1,49 @@
+{
+  "scenario_name": "India Net Zero 2070",
+  "source": "Illustrative parameters based on NITI Aayog Low Carbon Development Strategy (2022) and IEA India Energy Outlook (2021)",
+  "note": "Values are scenario assumptions for analytical purposes, not official projections",
+  "target_year": 2070,
+  "interim_milestones": {
+    "2030": {
+      "renewable_capacity_gw": 500,
+      "ev_share_new_sales_pct": 30,
+      "carbon_price_inr_tonne": 3000,
+      "emissions_reduction_vs_2019_pct": 45,
+      "renewable_share_of_power_pct": 65
+    },
+    "2040": {
+      "renewable_capacity_gw": 1000,
+      "ev_share_new_sales_pct": 70,
+      "carbon_price_inr_tonne": 5500,
+      "emissions_reduction_vs_2019_pct": 65,
+      "renewable_share_of_power_pct": 85
+    },
+    "2050": {
+      "renewable_capacity_gw": 1800,
+      "ev_share_new_sales_pct": 95,
+      "carbon_price_inr_tonne": 8000,
+      "emissions_reduction_vs_2019_pct": 80,
+      "renewable_share_of_power_pct": 95
+    },
+    "2070": {
+      "renewable_capacity_gw": 2500,
+      "ev_share_new_sales_pct": 100,
+      "carbon_price_inr_tonne": 12000,
+      "emissions_reduction_vs_2019_pct": 100,
+      "renewable_share_of_power_pct": 99
+    }
+  },
+  "sector_transition_notes": {
+    "power": "Phase out sub-critical coal by 2035; super-critical by 2045",
+    "cement": "Clinker ratio to 0.6 by 2030; CCS deployment by 2040",
+    "steel": "50% scrap-EAF by 2035; hydrogen DRI pilots by 2030",
+    "transport": "EV mandate for 2-wheelers by 2030; commercial fleet by 2040",
+    "buildings": "Net-zero energy code for new construction by 2030"
+  },
+  "investment_needs_usd_bn_annual": {
+    "2025_2030": 180,
+    "2030_2040": 260,
+    "2040_2050": 300,
+    "source": "Illustrative, based on Standard Chartered and IEA estimates"
+  }
+}

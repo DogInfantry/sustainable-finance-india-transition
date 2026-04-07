@@ -1,0 +1,21 @@
+issuance_year,issuer_name,issuer_type,amount_inr_cr,tenor_years,coupon_pct,use_of_proceeds,external_review,listed_exchange
+2015,IREDA,psu,1000,10,7.15,renewable_energy,second_party_opinion,BSE
+2016,Yes Bank,bank,500,5,8.25,renewable_energy,second_party_opinion,BSE
+2017,NTPC Ltd,psu,2000,10,7.38,renewable_energy,certification,both
+2017,CLP Wind Farms,corporate,300,7,8.1,renewable_energy,second_party_opinion,BSE
+2018,Adani Green,corporate,800,7,8.4,renewable_energy,none,BSE
+2018,ReNew Power,corporate,600,5,8.65,renewable_energy,second_party_opinion,BSE
+2019,Hero Future Energies,corporate,450,6,8.3,renewable_energy,second_party_opinion,NSE
+2019,PFC,psu,1500,10,7.55,renewable_energy,second_party_opinion,both
+2020,IREDA,psu,1200,10,6.99,renewable_energy,certification,both
+2021,L&T Finance,bank,700,5,7.8,renewable_energy,second_party_opinion,BSE
+2022,REC Ltd,psu,2500,10,7.2,renewable_energy,certification,both
+2022,Tata Power,corporate,400,7,7.95,renewable_energy,second_party_opinion,BSE
+2023,Government of India (SGrB),sovereign,16000,5,7.29,renewable_energy,second_party_opinion,both
+2023,Government of India (SGrB),sovereign,8000,10,7.34,renewable_energy,second_party_opinion,both
+2023,Greenko,corporate,1200,6,8.05,renewable_energy,certification,BSE
+2024,NTPC Ltd,psu,5000,10,7.15,renewable_energy,certification,both
+2024,Government of India (SGrB),sovereign,20000,5,7.18,renewable_energy,second_party_opinion,both
+2024,Mahindra Finance,bank,500,5,8.1,green_buildings,second_party_opinion,BSE
+2024,IndusInd Bank,bank,750,5,8.3,sustainable_water,second_party_opinion,BSE
+2024,Torrent Power,corporate,600,7,7.75,renewable_energy,second_party_opinion,NSE
