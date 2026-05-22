@@ -20,7 +20,7 @@ Columns:
 - `external_review` — `second_party_opinion`, `certification`, `none`
 - `listed_exchange` — `BSE`, `NSE`, `both`
 
-### `pricing_spreads_synthetic.parquet`
+### `pricing_spreads_synthetic.csv`
 Illustrative credit spread data vs. duration-matched vanilla bonds.
 For real data, use Bloomberg or NSE/BSE bond analytics.
 
