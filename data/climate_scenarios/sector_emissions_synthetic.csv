@@ -1,0 +1,7 @@
+sector,baseline_year,baseline_emissions_mtco2e,emissions_2030_mtco2e,emissions_2050_mtco2e,emissions_intensity_index,transition_lever
+Power,2024,1120,860,210,100,renewables_and_storage
+Steel,2024,290,240,92,100,hydrogen_dri_and_scrap
+Cement,2024,210,176,78,100,clinker_substitution_and_ccus
+Transport,2024,340,255,95,100,fleet_electrification
+Buildings,2024,125,96,44,100,efficiency_and_cooling
+Agriculture,2024,410,372,250,100,methane_and_input_efficiency

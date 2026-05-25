@@ -6,7 +6,7 @@
 India-specific climate scenario parameters for the net-zero 2070 pathway.
 Based on NITI Aayog and IEA India Energy Outlook.
 
-### `sector_emissions_synthetic.parquet`
+### `sector_emissions_synthetic.csv`
 Baseline and transition emissions by sector.
 See sources below for real data.
 

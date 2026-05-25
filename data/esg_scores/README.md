@@ -25,6 +25,15 @@ Columns:
 ### `sector_benchmarks_synthetic.csv`
 Sector-level ESG percentile benchmarks for the Nifty 50 universe.
 
+Columns:
+- `sector`
+- `environmental_score_p25`
+- `environmental_score_p50`
+- `environmental_score_p75`
+- `social_score_p50`
+- `governance_score_p50`
+- `composite_esg_score_p50`
+
 ## Real Data Sources
 
 | Source | Coverage | Access |
