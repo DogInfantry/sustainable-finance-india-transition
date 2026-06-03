@@ -1,0 +1,7 @@
+subsector,lifecycle_stage,annual_deal_count,typical_ticket_inr_cr,fee_bps,estimated_fee_pool_inr_cr,primary_instrument,illustrative_flag,notes
+Utility-scale renewables,develop,18,1450,85,221.9,project_finance,Y,Illustrative synthetic pipeline for contracted renewable assets
+Grid and transmission upgrades,expand,9,2800,52,131.0,structured_term_loan,Y,Illustrative synthetic grid-upgrade financing mix
+Battery storage and flexible capacity,scale,11,1180,95,123.3,project_finance,Y,Illustrative synthetic storage deployment pipeline
+Green buildings and cooling retrofits,retrofit,24,265,115,73.1,green_loan,Y,Illustrative synthetic retrofit lending opportunity
+EV charging and fleet electrification,scale,21,180,140,52.9,sustainability_linked_loan,Y,Illustrative synthetic charging and fleet opportunity
+Industrial decarbonisation,transition,13,2350,105,320.8,transition_finance_loan,Y,Illustrative synthetic hard-to-abate transition capex

@@ -1,0 +1,21 @@
+ticker,company_name,sector,environmental_score,social_score,governance_score,composite_esg_score,brsr_disclosed,brsr_quality,thermal_coal_exposure_pct,water_stress_flag
+RELIANCE,Reliance Industries,Energy,42,55,68,52.6,True,full,5,True
+TCS,Tata Consultancy Services,IT,78,82,85,81.4,True,full,0,False
+HDFCBANK,HDFC Bank,Financials,62,70,80,70.0,True,full,0,False
+INFY,Infosys,IT,82,80,88,83.4,True,full,0,False
+ICICIBANK,ICICI Bank,Financials,58,65,78,66.5,True,full,0,False
+HINDALCO,Hindalco Industries,Materials,38,48,62,46.4,True,partial,0,True
+NTPCLTD,NTPC Ltd,Utilities,30,55,65,45.5,True,full,85,True
+COALINDIA,Coal India,Energy,18,52,58,36.2,True,partial,98,False
+JSWSTEEL,JSW Steel,Materials,35,50,66,46.8,True,partial,0,True
+TATASTEEL,Tata Steel,Materials,40,58,72,52.0,True,full,0,True
+SUNPHARMA,Sun Pharmaceutical,Healthcare,65,68,75,68.7,True,full,0,False
+WIPRO,Wipro,IT,80,75,82,79.1,True,full,0,False
+ADANIPORTS,Adani Ports,Industrials,45,50,55,49.5,True,partial,0,True
+BAJFINSERV,Bajaj Finserv,Financials,55,62,78,63.8,True,full,0,False
+MARUTI,Maruti Suzuki,Consumer Discretionary,52,62,74,61.4,True,full,0,False
+HCLTECH,HCL Technologies,IT,76,72,80,76.2,True,full,0,False
+LT,Larsen & Toubro,Industrials,50,60,75,60.5,True,full,0,True
+AXISBANK,Axis Bank,Financials,55,62,74,62.5,True,full,0,False
+ASIANPAINT,Asian Paints,Materials,60,65,80,67.5,True,full,0,True
+ULTRACEMCO,UltraTech Cement,Materials,32,52,68,46.4,True,partial,0,True
