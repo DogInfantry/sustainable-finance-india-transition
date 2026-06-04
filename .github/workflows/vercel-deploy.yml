@@ -4,10 +4,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,18 +15,40 @@ jobs:
           node-version: "18"
           cache: "npm"
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Pull Vercel environment (create project if needed)
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: npm run build
 
-      - name: Build project
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-
+      - name: Create Vercel project and deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npm install -g vercel@latest
+          
+          # Create project via Vercel REST API
+          PROJECT=$(curl -s -X POST "https://api.vercel.com/v10/projects" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "sfin-dashboard",
+              "framework": "vite",
+              "gitRepository": {
+                "type": "github",
+                "repo": "DogInfantry/sustainable-finance-india-transition"
+              }
+            }' \
+            --teamId "$VERCEL_ORG_ID")
+          
+          echo "Project response: $PROJECT"
+          PROJECT_ID=$(echo "$PROJECT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('id', d.get('error',{}).get('message','unknown')))")
+          echo "Project ID: $PROJECT_ID"
+          
+          # Deploy using prebuilt dist/
+          vercel deploy --prebuilt --prod \
+            --token="$VERCEL_TOKEN" \
+            --scope="$VERCEL_ORG_ID" \
+            --yes \
+            2>&1
